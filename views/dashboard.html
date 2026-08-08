@@ -42,9 +42,11 @@ td:last-child{text-align:right;font-variant-numeric:tabular-nums;color:var(--mut
 tr:last-child td{border-bottom:none}
 .empty{color:var(--dim);font-size:13px;padding:10px 2px}
 .chart{width:100%;height:auto;display:block}
-.chart text{font-size:12px;fill:#52525b}
-.chart line{vector-effect:non-scaling-stroke}
+.chart text{font-size:12px;fill:#a1a1aa}
+.chart-m{display:none}
 @media (max-width:760px){
+  .chart-d{display:none}
+  .chart-m{display:block}
   .wrap{padding:20px 14px 48px}
   .sitebar{flex-direction:column;align-items:flex-start;gap:14px}
   .kpis{grid-template-columns:repeat(2,1fr);padding:14px 4px}

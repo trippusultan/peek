@@ -155,19 +155,30 @@ function fmtDay(d) { // '2026-08-02' -> '2 Aug' (Plausible style, day-first)
 }
 
 // Inline SVG area chart (Plausible-style), zero client JS. mode: 'day' or 'hour'.
-// Text size is set by CSS (.chart text) so it stays 12px real regardless of viewBox scaling.
+// Emits TWO svgs: a 900-wide desktop viewBox and a 400-wide mobile viewBox. SVG text
+// scales with its viewBox, so a single svg would rasterize labels to ~4px on mobile;
+// the mobile variant keeps them ~10px real. CSS shows one per media query.
+// Label color #a1a1aa (zinc-400) for contrast on the #18181b panel.
 function chartSVG(points, mode) {
-  const W = 900, H = 240, padL = 56, padR = 28, padT = 14, padB = 30;
+  const opts = [
+    { w: 900, h: 244, padL: 56, padR: 28, padT: 14, padB: 38, cls: 'chart-d', gid: 'fill', nX: 6 },
+    { w: 400, h: 220, padL: 44, padR: 14, padT: 12, padB: 32, cls: 'chart-m', gid: 'fillm', nX: 4 }
+  ];
+  return opts.map(o => buildChart(points, mode, o)).join('');
+}
+
+function buildChart(points, mode, { w, h, padL, padR, padT, padB, cls, gid, nX }) {
   const rawMax = Math.max(1, ...points.map(p => p.uv));
   const step = niceStep(rawMax / 4);            // 4 divisions, clean numbers
   const max = Math.ceil(rawMax / step) * step;  // e.g. 79 -> step 20 -> max 80
-  const iw = W - padL - padR, ih = H - padT - padB;
+  const iw = w - padL - padR, ih = h - padT - padB;
   const X = i => padL + (points.length === 1 ? iw / 2 : (i / (points.length - 1)) * iw);
   const Y = v => padT + ih - (v / max) * ih;
   let out = '';
+  out += `<line x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT + ih}" stroke="#222228" stroke-width="1"/>`;
   for (let g = 0; g <= 4; g++) {
     const v = (max / 4) * g, y = Y(v);
-    out += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="#222228" stroke-width="1"/>`;
+    out += `<line x1="${padL}" y1="${y}" x2="${w - padR}" y2="${y}" stroke="#222228" stroke-width="1"/>`;
     out += `<text x="${padL - 9}" y="${y + 4}" text-anchor="end">${fmt(v)}</text>`;
   }
   const pts = points.map((p, i) => [X(i), Y(p.uv)]);
@@ -179,20 +190,20 @@ function chartSVG(points, mode) {
     d += ` C ${c1x} ${c1y}, ${c2x} ${c2y}, ${p2[0]} ${p2[1]}`;
   }
   const area = `${d} L ${pts[pts.length - 1][0]} ${padT + ih} L ${pts[0][0]} ${padT + ih} Z`;
-  out += '<defs><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3085fe" stop-opacity="0.32"/><stop offset="1" stop-color="#3085fe" stop-opacity="0"/></linearGradient></defs>';
-  out += `<path d="${area}" fill="url(#fill)"/>`;
+  out += `<defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3085fe" stop-opacity="0.32"/><stop offset="1" stop-color="#3085fe" stop-opacity="0"/></linearGradient></defs>`;
+  out += `<path d="${area}" fill="url(#${gid})"/>`;
   out += `<path d="${d}" fill="none" stroke="#3085fe" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
   points.forEach((p, i) => {
     const label = mode === 'hour' ? `${String(p.h).padStart(2, '0')}:00` : p.day;
     out += `<circle cx="${X(i)}" cy="${Y(p.uv)}" r="3" fill="transparent"><title>${label} - ${fmt(p.uv)} visitors</title></circle>`;
   });
-  const stepX = Math.max(1, Math.floor(points.length / 6));
+  const stepX = Math.max(1, Math.floor(points.length / nX));
   for (let i = 0; i < points.length; i += stepX) {
     const p = points[i];
     const label = mode === 'hour' ? `${String(p.h).padStart(2, '0')}h` : fmtDay(p.day);
-    out += `<text x="${X(i)}" y="${H - 10}" text-anchor="middle">${label}</text>`;
+    out += `<text x="${X(i)}" y="${h - 12}" text-anchor="middle">${label}</text>`;
   }
-  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Visitors per ${mode}">${out}</svg>`;
+  return `<svg class="chart ${cls}" viewBox="0 0 ${w} ${h}" role="img" aria-label="Visitors per ${mode}">${out}</svg>`;
 }
 
 module.exports = { db, SESSION_IDLE_MS, dayKey, visitorHash, isBot, record, insertRow, rangeStats, topPages, topRefs, topCountries, topScr, perDay, perHour, chartSVG, currentVisitors, fmt };
