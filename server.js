@@ -138,6 +138,8 @@ app.get('/progress', (req, res) => {
   res.send(PROGRESS);
 });
 app.use('/progress.json', express.static(path.join(__dirname, 'progress.json'), { maxAge: 0 }));
+// landing page + product screenshots (index.html served at /)
+app.use(express.static(path.join(__dirname, 'public'), { maxAge: 3600 }));
 
 app.get('/health', (req, res) => res.send('ok'));
 
