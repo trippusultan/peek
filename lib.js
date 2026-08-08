@@ -173,8 +173,8 @@ function buildChart(points, mode, { w, h, padL, padR, padT, padB, cls, gid, nX }
   const Y = v => padT + ih - (v / max) * ih;
   let out = '';
   out += `<line x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT + ih}" stroke="#3a3a42" stroke-width="1"/>`;
-  for (let g = 0; g <= 4; g++) {
-    const v = (max / 4) * g, y = Y(v);
+  for (let g = 0; g * step <= max; g++) {
+    const v = step * g, y = Y(v);
     out += `<line x1="${padL}" y1="${y}" x2="${w - padR}" y2="${y}" stroke="#3a3a42" stroke-width="1"/>`;
     out += `<text x="${padL - 9}" y="${y + 4}" text-anchor="end">${fmt(v)}</text>`;
   }

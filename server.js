@@ -64,11 +64,13 @@ function trend(cur, prev, invert) {
 function rows(data, nameKey, countKey = 'pv', headers = ['Source', 'Visitors']) {
   if (!data.length) return `<div class="empty">Nothing yet</div>`;
   const max = Math.max(1, data[0][countKey]);
+  const TINTS = [['#2d3a4f', '#9cc2ff'], ['#3a2d4f', '#c9a6ff'], ['#2d4f3a', '#9fe8b0'], ['#4f3a2d', '#ffcf9e'], ['#4f2d3a', '#ffa8c0'], ['#3a4f2d', '#d2e89f']];
   return `<table><thead><tr><th>${headers[0]}</th><th>${headers[1]}</th></tr></thead><tbody>` +
     data.map((r, i) => {
       const name = r[nameKey] || 'Direct / None';
       const pct = Math.round((r[countKey] / max) * 100);
-      return `<tr${i === 0 ? ' class="top"' : ''}><td><span class="bar" style="width:${pct}%"></span><span class="mono">${esc((name[0] || '?').toUpperCase())}</span><span class="nm">${esc(name)}</span></td><td class="n">${lib.fmt(r[countKey])}</td></tr>`;
+      const [bg, fg] = i === 0 ? TINTS[0] : TINTS[(name.length * 31 + name.charCodeAt(0)) % TINTS.length];
+      return `<tr${i === 0 ? ' class="top"' : ''}><td><span class="bar" style="width:${pct}%"></span><span class="mono" style="background:${bg};border-color:${bg};color:${fg}">${esc((name[0] || '?').toUpperCase())}</span><span class="nm">${esc(name)}</span></td><td class="n">${lib.fmt(r[countKey])}</td></tr>`;
     }).join('') + '</tbody></table>';
 }
 
