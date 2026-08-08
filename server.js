@@ -102,6 +102,10 @@ function renderDashboard(req, res) {
     chart = lib.chartSVG(lib.perDay(SITE, Math.floor(start / 1000), Math.floor(now / 1000)), 'day');
   }
 
+  const tab = req.query.tab === 'pages' ? 'pages' : req.query.tab === 'countries' ? 'countries' : req.query.tab === 'devices' ? 'devices' : 'sources';
+  const tabs = (current, pairs) => pairs.map(([k, label]) =>
+    `<a href="/dashboard?range=${range}&tab=${k}"${k === current ? ' class="on"' : ''}>${label}</a>`).join('');
+
   const html = DASH
     .replaceAll('{{SITE}}', esc(SITE))
     .replaceAll('{{RANGE_LINKS}}', links)
@@ -111,10 +115,14 @@ function renderDashboard(req, res) {
     .replaceAll('{{SESSIONS}}', lib.fmt(cur.sessions)).replaceAll('{{SESSIONS_TREND}}', trend(cur.sessions, prev.sessions))
     .replaceAll('{{LIVE}}', lib.currentVisitors(SITE))
     .replaceAll('{{CHART}}', chart)
-    .replaceAll('{{REFS}}', rows(lib.topRefs(SITE, Math.floor(start / 1000)), 'ref', 'pv', ['Source', 'Visitors']))
-    .replaceAll('{{PAGES}}', rows(lib.topPages(SITE, Math.floor(start / 1000)), 'path', 'pv', ['Page', 'Pageviews']))
-    .replaceAll('{{COUNTRIES}}', rows(lib.topCountries(SITE, Math.floor(start / 1000)).map(r => ({ ...r, country: cname(r.country) })), 'country', 'pv', ['Country', 'Visitors']))
-    .replaceAll('{{DEVICES}}', rows(lib.topScr(SITE, Math.floor(start / 1000)).map(r => ({ ...r, scr: r.scr[0].toUpperCase() + r.scr.slice(1) })), 'scr', 'pv', ['Device', 'Visitors']));
+    .replaceAll('{{TR_TABS}}', tabs(tab, [['sources', 'Sources'], ['pages', 'Pages']]))
+    .replaceAll('{{LOC_TABS}}', tabs(tab, [['countries', 'Countries'], ['devices', 'Devices']]))
+    .replaceAll('{{TR_TABLE}}', tab === 'pages'
+      ? rows(lib.topPages(SITE, Math.floor(start / 1000)), 'path', 'pv', ['Page', 'Pageviews'])
+      : rows(lib.topRefs(SITE, Math.floor(start / 1000)), 'ref', 'pv', ['Source', 'Visitors']))
+    .replaceAll('{{LOC_TABLE}}', tab === 'devices'
+      ? rows(lib.topScr(SITE, Math.floor(start / 1000)).map(r => ({ ...r, scr: r.scr[0].toUpperCase() + r.scr.slice(1) })), 'scr', 'pv', ['Device', 'Visitors'])
+      : rows(lib.topCountries(SITE, Math.floor(start / 1000)).map(r => ({ ...r, country: cname(r.country) })), 'country', 'pv', ['Country', 'Visitors']));
   res.set('Cache-Control', 'no-store');
   res.send(html);
 }
