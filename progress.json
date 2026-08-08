@@ -4,9 +4,12 @@
   "phases": {
     "bar-captured": { "status": "done", "note": "desktop + mobile shots in refs/; palette #09090b / #18181b, accent #3085fe" },
     "build": { "status": "done", "note": "lib.js, server.js, snippet (353B gzipped), dashboard, seed, test" },
-    "measure": { "status": "done", "note": "snippet 353B gzipped (< 2048 target); dashboard TTFB 0.012s vs plausible 0.358s (refs/measure.txt)" },
-    "round-1": { "status": "run", "note": "4 parallel critics: desktop blind A/B, mobile blind A/B, chart+panels, technical audit" }
+    "measure": { "status": "done", "note": "snippet 353B gzipped (< 2048); TTFB 0.012s vs plausible 0.358s (refs/measure.txt)" },
+    "round-1": { "status": "done", "note": "tech audit all-pass; desktop A wins 6-0, mobile A wins 3-2. Gaps: chart (bars->area, labels, edge clip), KPI container+dividers, header chrome, table padding, bounce trend inversion, trust-proxy fix" },
+    "round-2": { "status": "run", "note": "all round-1 gaps fixed; re-shooting and re-judging desktop, mobile, chart-panels" }
   },
-  "rounds": [],
-  "updated": "2026-08-08T10:35:00Z"
+  "rounds": [
+    { "name": "Round 1", "verdict": "Technical audit: all 9 pieces pass (snippet 353B gz, daily-rotating hash, bot drop, (site,day) index, 30-min sessions, bounce math, basic auth, honest README, tests green). Two flags fixed: trust-proxy spoofing, bounce trend color. Visual: bar (A) wins desktop 6-0, mobile 3-2. Biggest gaps: chart reads like a debug plot (sharp bars, raw dates, edge clipping on mobile), KPIs float without container/dividers, header lacks chrome, tables cramped." }
+  ],
+  "updated": "2026-08-08T11:05:00Z"
 }

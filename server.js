@@ -10,7 +10,7 @@ const lib = require('./lib');
 const PORT = process.env.PORT || 8000;
 const SITE = process.env.SITE || 'demo';
 const app = express();
-app.set('trust proxy', true); // honor X-Forwarded-For when behind nginx/caddy
+app.set('trust proxy', 'loopback'); // trust nginx/caddy on this host only; remote XFF spoofing is rejected
 app.disable('x-powered-by');
 
 const SNIPPET = fs.readFileSync(path.join(__dirname, 'public', 'snippet.js'));
@@ -51,11 +51,13 @@ app.get('/api/event', (req, res) => {
 
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-function trend(cur, prev) {
+function trend(cur, prev, invert) {
   if (!prev) return '<span class="tr flat">no data</span>';
   const pct = Math.round(((cur - prev) / prev) * 1000) / 10;
-  const cls = pct > 0 ? 'up' : pct < 0 ? 'down' : 'flat';
-  const arrow = pct > 0 ? '\u25B2' : pct < 0 ? '\u25BC' : '\u25CF';
+  if (pct === 0) return '<span class="tr flat">\u25CF 0%</span>';
+  const up = invert ? pct < 0 : pct > 0; // bounce: rising is bad
+  const cls = up ? 'up' : 'down';
+  const arrow = pct > 0 ? '\u25B2' : '\u25BC';
   return `<span class="tr ${cls}">${arrow} ${Math.abs(pct)}%</span>`;
 }
 
@@ -101,7 +103,7 @@ function renderDashboard(req, res) {
     .replaceAll('{{RANGE_LINKS}}', links)
     .replaceAll('{{UV}}', lib.fmt(cur.uv)).replaceAll('{{UV_TREND}}', trend(cur.uv, prev.uv))
     .replaceAll('{{PV}}', lib.fmt(cur.pv)).replaceAll('{{PV_TREND}}', trend(cur.pv, prev.pv))
-    .replaceAll('{{BOUNCE}}', cur.bounce + '%').replaceAll('{{BOUNCE_TREND}}', trend(cur.bounce, prev.bounce))
+    .replaceAll('{{BOUNCE}}', cur.bounce + '%').replaceAll('{{BOUNCE_TREND}}', trend(cur.bounce, prev.bounce, true))
     .replaceAll('{{SESSIONS}}', lib.fmt(cur.sessions)).replaceAll('{{SESSIONS_TREND}}', trend(cur.sessions, prev.sessions))
     .replaceAll('{{CHART}}', chart)
     .replaceAll('{{REFS}}', rows(lib.topRefs(SITE, Math.floor(start / 1000)), 'ref'))

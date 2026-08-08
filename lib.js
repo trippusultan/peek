@@ -135,30 +135,52 @@ function perHour(site, startTs, endTs) {
 
 const fmt = n => n >= 10000 ? (n / 1000).toFixed(1) + 'k' : String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-// Inline SVG bar chart, zero client JS. mode: 'day' or 'hour'.
+function niceMax(v) {
+  if (v <= 0) return 1;
+  const step = Math.pow(10, Math.floor(Math.log10(v)));
+  const m = v / step;
+  return (m <= 1 ? 1 : m <= 2 ? 2 : m <= 5 ? 5 : 10) * step;
+}
+
+function fmtDay(d) { // '2026-08-02' -> 'Aug 2'
+  const [y, m, dd] = d.split('-').map(Number);
+  return new Date(Date.UTC(y, m - 1, dd)).toLocaleString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
+}
+
+// Inline SVG area chart (Plausible-style), zero client JS. mode: 'day' or 'hour'.
 function chartSVG(points, mode) {
-  const W = 900, H = 220, padB = 26, padT = 14, padL = 44;
-  const max = Math.max(1, ...points.map(p => p.uv));
-  const bw = (W - padL) / points.length;
-  const hgt = v => (v / max) * (H - padB - padT);
+  const W = 900, H = 240, padL = 52, padR = 20, padT = 14, padB = 30;
+  const max = niceMax(Math.max(1, ...points.map(p => p.uv)));
+  const iw = W - padL - padR, ih = H - padT - padB;
+  const X = i => padL + (points.length === 1 ? iw / 2 : (i / (points.length - 1)) * iw);
+  const Y = v => padT + ih - (v / max) * ih;
   let out = '';
-  for (let i = 0; i <= 3; i++) {
-    const y = H - padB - (i / 3) * (H - padB - padT);
-    out += `<line x1="${padL}" y1="${y}" x2="${W}" y2="${y}" stroke="#222228" stroke-width="1"/>`;
-    out += `<text x="0" y="${y + 3}" fill="#52525b" font-size="10">${fmt(Math.round((max * i) / 3))}</text>`;
+  for (let g = 0; g <= 4; g++) {
+    const v = (max / 4) * g, y = Y(v);
+    out += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="#222228" stroke-width="1"/>`;
+    out += `<text x="${padL - 8}" y="${y + 3}" fill="#52525b" font-size="10" text-anchor="end">${fmt(v)}</text>`;
   }
+  const pts = points.map((p, i) => [X(i), Y(p.uv)]);
+  let d = `M ${pts[0][0]} ${pts[0][1]}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(pts.length - 1, i + 2)];
+    const c1x = p1[0] + (p2[0] - p0[0]) / 6, c1y = p1[1] + (p2[1] - p0[1]) / 6;
+    const c2x = p2[0] - (p3[0] - p1[0]) / 6, c2y = p2[1] - (p3[1] - p1[1]) / 6;
+    d += ` C ${c1x} ${c1y}, ${c2x} ${c2y}, ${p2[0]} ${p2[1]}`;
+  }
+  const area = `${d} L ${pts[pts.length - 1][0]} ${padT + ih} L ${pts[0][0]} ${padT + ih} Z`;
+  out += '<defs><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3085fe" stop-opacity="0.32"/><stop offset="1" stop-color="#3085fe" stop-opacity="0"/></linearGradient></defs>';
+  out += `<path d="${area}" fill="url(#fill)"/>`;
+  out += `<path d="${d}" fill="none" stroke="#3085fe" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
   points.forEach((p, i) => {
-    const x = padL + i * bw + bw * 0.18, w = bw * 0.64, h = hgt(p.uv), y = H - padB - h;
     const label = mode === 'hour' ? `${String(p.h).padStart(2, '0')}:00` : p.day;
-    out += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="2" fill="#3085fe" opacity="${p.uv ? 0.92 : 0.12}"><title>${label} - ${fmt(p.uv)} visitors</title></rect>`;
+    out += `<circle cx="${X(i)}" cy="${Y(p.uv)}" r="3" fill="transparent"><title>${label} - ${fmt(p.uv)} visitors</title></circle>`;
   });
-  const ticks = 6;
-  const step = Math.max(1, Math.floor(points.length / ticks));
+  const step = Math.max(1, Math.floor(points.length / 6));
   for (let i = 0; i < points.length; i += step) {
     const p = points[i];
-    const label = mode === 'hour' ? `${String(p.h).padStart(2, '0')}h` : p.day.slice(5);
-    const x = padL + i * bw + bw * 0.5;
-    out += `<text x="${x}" y="${H - 8}" fill="#52525b" font-size="10" text-anchor="middle">${label}</text>`;
+    const label = mode === 'hour' ? `${String(p.h).padStart(2, '0')}h` : fmtDay(p.day);
+    out += `<text x="${X(i)}" y="${H - 10}" fill="#52525b" font-size="10" text-anchor="middle">${label}</text>`;
   }
   return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Visitors per ${mode}">${out}</svg>`;
 }

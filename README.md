@@ -66,6 +66,14 @@ Dashboard: http://localhost:8000/dashboard (basic auth). Ranges: today / 7d / 30
 | Bounce rate | sessions with exactly one pageview / all sessions |
 | Sessionization | server-side idle cutoff of 30 minutes (in-memory) |
 
+Known privacy ceilings, stated honestly: (1) the operator of this instance can
+correlate a visitor across *their own* sites (same IP+UA hashes identically on
+the same day) - fine for a personal site, not a shared service; (2) the
+visitor hash is daily, so 30-day unique counts are per-day uniques summed by
+SQLite's `COUNT(DISTINCT)` semantics only within a day; (3) `trust proxy` is
+set to `loopback` so a reverse proxy on the same host (nginx/caddy) is honored
+but remote `X-Forwarded-For` spoofing is rejected.
+
 ## Checks
 
 ```bash
