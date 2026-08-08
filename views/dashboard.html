@@ -23,7 +23,8 @@ body{background:var(--bg);color:var(--txt);font:14px/1.5 system-ui,-apple-system
 .ranges a.on{background:var(--panel2);color:var(--txt)}
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:26px}
 .kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px}
-.kpi:first-child{background:#212129;border-color:#464651}
+.kpi:first-child{background:#22222a;border-color:#4a4a55}
+.kpi:first-child h3{color:var(--acc)}
 .kpi h3{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:#b4b4bc;font-weight:500;margin-bottom:9px}
 .kpi .valrow{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
 .kpi .num{font-size:26px;font-weight:650;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1}
@@ -59,6 +60,7 @@ tr.top .mono{background:#2d3a4f;border-color:#3d5570;color:#9cc2ff}
   .chart-d{display:none}
   .chart-m{display:block}
   .wrap{padding:20px 14px 96px}
+  tbody tr:nth-child(n+6){display:none}
   .sitebar{flex-direction:column;align-items:flex-start;gap:14px}
   .kpis{grid-template-columns:repeat(2,1fr);gap:12px}
   .kpi{padding:14px}
@@ -73,7 +75,7 @@ tr.top .mono{background:#2d3a4f;border-color:#3d5570;color:#9cc2ff}
   <div class="brand"><span class="mark">P</span>Peek</div>
   <div class="sitebar">
     <div class="sitename">{{SITE}}</div>
-    <div class="sitebar-right"><span class="live"><i></i>{{LIVE}} now</span>
+    <div class="sitebar-right"><span class="live"><i></i>{{LIVE}} current visitors</span>
     <nav class="ranges" aria-label="Date range">{{RANGE_LINKS}}</nav></div>
   </div>
   <div class="kpis">

@@ -54,8 +54,8 @@ for (let d = DAYS - 1; d >= 0; d--) {
   const weekend = dow === 0 || dow === 6;
   // organic-ish volume: weekday up, weekend down, growth trend, occasional spikes
   let vol = 70 + rnd() * 40;
-  if (weekend) vol *= 0.55;
-  vol *= (1 + (DAYS - d) * 0.01); // growth toward today: recent windows beat previous ones
+  if (weekend) vol *= 0.7;
+  vol *= (1 + (DAYS - d) * 0.02); // stronger growth toward today: mixed green/red deltas vs prev window
   if (rnd() < 0.08) vol *= 1.7; // mild spike, keeps trends sane (no -55% shock deltas)
   const n = Math.round(vol);
   const daySessions = [];
