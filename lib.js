@@ -160,11 +160,8 @@ function fmtDay(d) { // '2026-08-02' -> '2 Aug' (Plausible style, day-first)
 // the mobile variant keeps them ~10px real. CSS shows one per media query.
 // Label color #a1a1aa (zinc-400) for contrast on the #18181b panel.
 function chartSVG(points, mode) {
-  const opts = [
-    { w: 900, h: 244, padL: 56, padR: 28, padT: 14, padB: 38, cls: 'chart-d', gid: 'fill', nX: 6 },
-    { w: 400, h: 220, padL: 44, padR: 14, padT: 12, padB: 32, cls: 'chart-m', gid: 'fillm', nX: 4 }
-  ];
-  return opts.map(o => buildChart(points, mode, o)).join('');
+  return buildChart(points, mode, { w: 900, h: 244, padL: 56, padR: 28, padT: 14, padB: 38, cls: 'chart-d', gid: 'fill', nX: 6 }) +
+         buildChart(points, mode, { w: 400, h: 140, padL: 44, padR: 14, padT: 12, padB: 32, cls: 'chart-m', gid: 'fillm', nX: 4 });
 }
 
 function buildChart(points, mode, { w, h, padL, padR, padT, padB, cls, gid, nX }) {
