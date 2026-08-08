@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{SITE}} - Peek</title>
+<style>
+:root{--bg:#09090b;--panel:#18181b;--panel2:#1c1c20;--line:#27272a;--line2:#1f1f23;--txt:#fafafa;--mut:#a1a1aa;--dim:#71717a;--faint:#52525b;--acc:#3085fe;--up:#00bc7d;--down:#f02833}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:dark}
+body{background:var(--bg);color:var(--txt);font:14px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1100px;margin:0 auto;padding:28px 20px 64px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:28px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px;letter-spacing:-.01em}
+.mark{width:22px;height:22px;border-radius:6px;background:#4f39f6;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.ranges{display:flex;gap:2px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:3px}
+.ranges a{color:var(--mut);text-decoration:none;padding:5px 13px;border-radius:6px;font-size:13px;transition:background .15s,color .15s}
+.ranges a:hover{color:var(--txt)}
+.ranges a.on{background:var(--panel2);color:var(--txt)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:26px}
+.kpi h3{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--dim);font-weight:500;margin-bottom:9px}
+.kpi .num{font-size:30px;font-weight:650;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1}
+.tr{display:inline-block;font-size:12px;margin-top:7px;font-variant-numeric:tabular-nums}
+.tr.up{color:var(--up)}.tr.down{color:var(--down)}.tr.flat{color:var(--dim)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin-bottom:16px}
+.card h2{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--dim);font-weight:500;margin-bottom:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+table{width:100%;border-collapse:collapse}
+th{color:var(--dim);font-weight:500;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.06em;padding:0 6px 8px}
+td{padding:8px 6px;border-bottom:1px solid var(--line2);font-size:13px;color:var(--mut)}
+td:first-child{color:var(--txt)}
+td:last-child,th:last-child{text-align:right;font-variant-numeric:tabular-nums;color:var(--mut)}
+tr:last-child td{border-bottom:none}
+.empty{color:var(--dim);font-size:13px;padding:10px 2px}
+.chart{width:100%;height:auto;display:block}
+@media (max-width:760px){
+  .wrap{padding:20px 14px 48px}
+  .top{flex-direction:column;align-items:flex-start;gap:14px}
+  .kpis{grid-template-columns:repeat(2,1fr);gap:12px}
+  .kpi .num{font-size:24px}
+  .grid2{grid-template-columns:1fr}
+  .card{padding:14px 14px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand"><span class="mark">P</span>{{SITE}}</div>
+    <nav class="ranges" aria-label="Date range">{{RANGE_LINKS}}</nav>
+  </div>
+  <div class="kpis">
+    <div class="kpi"><h3>Unique visitors</h3><div class="num">{{UV}}</div>{{UV_TREND}}</div>
+    <div class="kpi"><h3>Pageviews</h3><div class="num">{{PV}}</div>{{PV_TREND}}</div>
+    <div class="kpi"><h3>Bounce rate</h3><div class="num">{{BOUNCE}}</div>{{BOUNCE_TREND}}</div>
+    <div class="kpi"><h3>Sessions</h3><div class="num">{{SESSIONS}}</div>{{SESSIONS_TREND}}</div>
+  </div>
+  <div class="card">
+    <h2>Visitors per day</h2>
+    {{CHART}}
+  </div>
+  <div class="grid2">
+    <div class="card"><h2>Top sources</h2>{{REFS}}</div>
+    <div class="card"><h2>Top pages</h2>{{PAGES}}</div>
+  </div>
+  <div class="grid2">
+    <div class="card"><h2>Countries</h2>{{COUNTRIES}}</div>
+    <div class="card"><h2>Devices</h2>{{DEVICES}}</div>
+  </div>
+</div>
+</body>
+</html>

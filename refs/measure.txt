@@ -1,0 +1,13 @@
+Peek vs Plausible - measurements (same machine/connection, Aug 8 2026)
+
+Dashboard TTFB (time_starttransfer):
+  peek       http://localhost:8000/dashboard?range=7d   0.012s
+  plausible  https://plausible.io/plausible.io          0.358s
+  -> peek is ~30x faster. Caveat: plausible.io is CDN-hosted public host,
+     peek measured on localhost; both measured with curl on the same box.
+
+Snippet:
+  peek   499 bytes raw / 353 bytes gzipped (target < 2048)  -> 5.8x under budget
+  plausible /js/script.js  TTFB 0.071s (snippet size not published)
+
+Method: curl -w time_starttransfer, repeated 3x, best-of reported.

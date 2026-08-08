@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Peek build progress</title>
+<style>
+:root{--bg:#09090b;--panel:#18181b;--line:#27272a;--txt:#fafafa;--mut:#a1a1aa;--ok:#00bc7d;--run:#3085fe;--wait:#52525b;--bad:#f02833}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font:14px/1.6 system-ui,"Segoe UI",Roboto,sans-serif;padding:40px 20px}
+.wrap{max-width:720px;margin:0 auto}
+h1{font-size:20px;margin-bottom:4px}
+.sub{color:var(--mut);font-size:13px;margin-bottom:28px}
+.phase{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:10px;display:flex;gap:12px;align-items:baseline}
+.dot{width:9px;height:9px;border-radius:50%;flex:none;transform:translateY(1px)}
+.dot.done{background:var(--ok)}.dot.run{background:var(--run);box-shadow:0 0 0 4px rgba(48,133,254,.2)}.dot.wait{background:var(--wait)}.dot.bad{background:var(--bad)}
+.name{font-weight:600;font-size:14px}
+.note{color:var(--mut);font-size:12px;margin-left:auto;text-align:right;max-width:55%}
+.round{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:10px}
+.round h3{font-size:13px;margin-bottom:6px}
+.verdict{color:var(--mut);font-size:13px;white-space:pre-wrap}
+.mono{font-family:ui-monospace,Consolas,monospace;font-size:12px;color:var(--mut)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Peek build progress</h1>
+  <div class="sub">Privacy-first web analytics. Bar: <span class="mono">plausible.io/plausible.io</span>, judged blind. Auto-refreshes.</div>
+  <div id="phases"></div>
+  <h2 style="font-size:13px;color:var(--mut);margin:22px 0 10px;text-transform:uppercase;letter-spacing:.08em">Judging rounds</h2>
+  <div id="rounds"></div>
+  <div class="sub" id="ts" style="margin-top:24px"></div>
+</div>
+<script>
+async function load(){
+  try{
+    const r = await fetch('/progress.json?t=' + Date.now());
+    const j = await r.json();
+    document.getElementById('phases').innerHTML = Object.entries(j.phases).map(([k,v]) =>
+      `<div class="phase"><span class="dot ${v.status}"></span><span class="name">${k.replace(/-/g,' ')}</span><span class="note">${v.note||''}</span></div>`).join('');
+    document.getElementById('rounds').innerHTML = (j.rounds||[]).map(r =>
+      `<div class="round"><h3>${r.name}</h3><div class="verdict">${r.verdict||''}</div></div>`).join('') || '<div class="sub">No rounds yet.</div>';
+    document.getElementById('ts').textContent = 'updated ' + new Date(j.updated).toLocaleString();
+  }catch(e){}
+}
+load(); setInterval(load, 4000);
+</script>
+</body>
+</html>
