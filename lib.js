@@ -74,40 +74,40 @@ function insertRow(row) {
     row.path || '/', row.ref || '', row.scr || '', row.country || '');
 }
 
-function rangeStats(site, startTs) {
+function rangeStats(site, startTs, endTs = Math.floor(Date.now() / 1000)) {
   const s = db.prepare(
-    'SELECT COUNT(*) pv, COUNT(DISTINCT visitor) uv, COUNT(DISTINCT sess) sessions FROM events WHERE site=? AND ts>=?'
-  ).get(site, startTs);
+    'SELECT COUNT(*) pv, COUNT(DISTINCT visitor) uv, COUNT(DISTINCT sess) sessions FROM events WHERE site=? AND ts>=? AND ts<?'
+  ).get(site, startTs, endTs);
   const bounced = db.prepare(
-    'SELECT COUNT(*) c FROM (SELECT sess FROM events WHERE site=? AND ts>=? GROUP BY sess HAVING COUNT(*)=1)'
-  ).get(site, startTs).c;
+    'SELECT COUNT(*) c FROM (SELECT sess FROM events WHERE site=? AND ts>=? AND ts<? GROUP BY sess HAVING COUNT(*)=1)'
+  ).get(site, startTs, endTs).c;
   s.bounced = bounced;
   s.bounce = s.sessions ? Math.round((bounced / s.sessions) * 1000) / 10 : 0;
   return s;
 }
 
-function topPages(site, startTs, n = 10) {
+function topPages(site, startTs, n = 10, endTs = Math.floor(Date.now() / 1000)) {
   return db.prepare(
-    'SELECT path, COUNT(*) pv, COUNT(DISTINCT visitor) uv FROM events WHERE site=? AND ts>=? GROUP BY path ORDER BY pv DESC LIMIT ?'
-  ).all(site, startTs, n);
+    'SELECT path, COUNT(*) pv, COUNT(DISTINCT visitor) uv FROM events WHERE site=? AND ts>=? AND ts<? GROUP BY path ORDER BY pv DESC LIMIT ?'
+  ).all(site, startTs, endTs, n);
 }
 
-function topRefs(site, startTs, n = 10) {
+function topRefs(site, startTs, n = 10, endTs = Math.floor(Date.now() / 1000)) {
   return db.prepare(
-    'SELECT ref, COUNT(*) pv, COUNT(DISTINCT visitor) uv FROM events WHERE site=? AND ts>=? GROUP BY ref ORDER BY pv DESC LIMIT ?'
-  ).all(site, startTs, n);
+    'SELECT ref, COUNT(*) pv, COUNT(DISTINCT visitor) uv FROM events WHERE site=? AND ts>=? AND ts<? GROUP BY ref ORDER BY pv DESC LIMIT ?'
+  ).all(site, startTs, endTs, n);
 }
 
-function topCountries(site, startTs, n = 10) {
+function topCountries(site, startTs, n = 10, endTs = Math.floor(Date.now() / 1000)) {
   return db.prepare(
-    'SELECT country, COUNT(*) pv, COUNT(DISTINCT visitor) uv FROM events WHERE site=? AND ts>=? AND country!=\'\' GROUP BY country ORDER BY pv DESC LIMIT ?'
-  ).all(site, startTs, n);
+    'SELECT country, COUNT(*) pv, COUNT(DISTINCT visitor) uv FROM events WHERE site=? AND ts>=? AND ts<? AND country!=\'\' GROUP BY country ORDER BY pv DESC LIMIT ?'
+  ).all(site, startTs, endTs, n);
 }
 
-function topScr(site, startTs, n = 5) {
+function topScr(site, startTs, n = 5, endTs = Math.floor(Date.now() / 1000)) {
   return db.prepare(
-    'SELECT scr, COUNT(*) pv, COUNT(DISTINCT visitor) uv FROM events WHERE site=? AND ts>=? AND scr!=\'\' GROUP BY scr ORDER BY pv DESC LIMIT ?'
-  ).all(site, startTs, n);
+    'SELECT scr, COUNT(*) pv, COUNT(DISTINCT visitor) uv FROM events WHERE site=? AND ts>=? AND ts<? AND scr!=\'\' GROUP BY scr ORDER BY pv DESC LIMIT ?'
+  ).all(site, startTs, endTs, n);
 }
 
 function perDay(site, startTs, endTs) {
@@ -135,22 +135,32 @@ function perHour(site, startTs, endTs) {
 
 const fmt = n => n >= 10000 ? (n / 1000).toFixed(1) + 'k' : String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-function niceMax(v) {
-  if (v <= 0) return 1;
-  const step = Math.pow(10, Math.floor(Math.log10(v)));
-  const m = v / step;
-  return (m <= 1 ? 1 : m <= 2 ? 2 : m <= 5 ? 5 : 10) * step;
+// distinct visitors with an event in the last 5 minutes (live now)
+function currentVisitors(site) {
+  const since = Math.floor((Date.now() - 5 * 60000) / 1000);
+  const r = db.prepare('SELECT COUNT(DISTINCT visitor) c FROM events WHERE site = ? AND ts >= ?').get(site, since);
+  return r ? r.c : 0;
 }
 
-function fmtDay(d) { // '2026-08-02' -> 'Aug 2'
+// nice step for y-axis: rounds to 1/2/5 x 10^n so gridline values are clean
+function niceStep(v) {
+  const p = Math.pow(10, Math.floor(Math.log10(v)));
+  const m = v / p;
+  return (m <= 1 ? 1 : m <= 2 ? 2 : m <= 5 ? 5 : 10) * p;
+}
+
+function fmtDay(d) { // '2026-08-02' -> '2 Aug' (Plausible style, day-first)
   const [y, m, dd] = d.split('-').map(Number);
-  return new Date(Date.UTC(y, m - 1, dd)).toLocaleString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
+  return new Date(Date.UTC(y, m - 1, dd)).toLocaleString('en-US', { day: 'numeric', month: 'short', timeZone: 'UTC' });
 }
 
 // Inline SVG area chart (Plausible-style), zero client JS. mode: 'day' or 'hour'.
+// Text size is set by CSS (.chart text) so it stays 12px real regardless of viewBox scaling.
 function chartSVG(points, mode) {
-  const W = 900, H = 240, padL = 52, padR = 20, padT = 14, padB = 30;
-  const max = niceMax(Math.max(1, ...points.map(p => p.uv)));
+  const W = 900, H = 240, padL = 56, padR = 28, padT = 14, padB = 30;
+  const rawMax = Math.max(1, ...points.map(p => p.uv));
+  const step = niceStep(rawMax / 4);            // 4 divisions, clean numbers
+  const max = Math.ceil(rawMax / step) * step;  // e.g. 79 -> step 20 -> max 80
   const iw = W - padL - padR, ih = H - padT - padB;
   const X = i => padL + (points.length === 1 ? iw / 2 : (i / (points.length - 1)) * iw);
   const Y = v => padT + ih - (v / max) * ih;
@@ -158,7 +168,7 @@ function chartSVG(points, mode) {
   for (let g = 0; g <= 4; g++) {
     const v = (max / 4) * g, y = Y(v);
     out += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="#222228" stroke-width="1"/>`;
-    out += `<text x="${padL - 8}" y="${y + 3}" fill="#52525b" font-size="10" text-anchor="end">${fmt(v)}</text>`;
+    out += `<text x="${padL - 9}" y="${y + 4}" text-anchor="end">${fmt(v)}</text>`;
   }
   const pts = points.map((p, i) => [X(i), Y(p.uv)]);
   let d = `M ${pts[0][0]} ${pts[0][1]}`;
@@ -176,13 +186,13 @@ function chartSVG(points, mode) {
     const label = mode === 'hour' ? `${String(p.h).padStart(2, '0')}:00` : p.day;
     out += `<circle cx="${X(i)}" cy="${Y(p.uv)}" r="3" fill="transparent"><title>${label} - ${fmt(p.uv)} visitors</title></circle>`;
   });
-  const step = Math.max(1, Math.floor(points.length / 6));
-  for (let i = 0; i < points.length; i += step) {
+  const stepX = Math.max(1, Math.floor(points.length / 6));
+  for (let i = 0; i < points.length; i += stepX) {
     const p = points[i];
     const label = mode === 'hour' ? `${String(p.h).padStart(2, '0')}h` : fmtDay(p.day);
-    out += `<text x="${X(i)}" y="${H - 10}" fill="#52525b" font-size="10" text-anchor="middle">${label}</text>`;
+    out += `<text x="${X(i)}" y="${H - 10}" text-anchor="middle">${label}</text>`;
   }
   return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Visitors per ${mode}">${out}</svg>`;
 }
 
-module.exports = { db, SESSION_IDLE_MS, dayKey, visitorHash, isBot, record, insertRow, rangeStats, topPages, topRefs, topCountries, topScr, perDay, perHour, chartSVG, fmt };
+module.exports = { db, SESSION_IDLE_MS, dayKey, visitorHash, isBot, record, insertRow, rangeStats, topPages, topRefs, topCountries, topScr, perDay, perHour, chartSVG, currentVisitors, fmt };

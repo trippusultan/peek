@@ -61,11 +61,12 @@ function trend(cur, prev, invert) {
   return `<span class="tr ${cls}">${arrow} ${Math.abs(pct)}%</span>`;
 }
 
-function rows(data, nameKey, countKey = 'pv', empty = 'Nothing yet') {
-  if (!data.length) return `<div class="empty">${empty}</div>`;
-  return '<table><tbody>' + data.map(r =>
-    `<tr><td>${esc(r[nameKey] || 'Direct / None')}</td><td class="n">${lib.fmt(r[countKey])}</td></tr>`
-  ).join('') + '</tbody></table>';
+function rows(data, nameKey, countKey = 'pv', headers = ['Source', 'Visitors']) {
+  if (!data.length) return `<div class="empty">Nothing yet</div>`;
+  return `<table><thead><tr><th>${headers[0]}</th><th>${headers[1]}</th></tr></thead><tbody>` +
+    data.map(r =>
+      `<tr><td>${esc(r[nameKey] || 'Direct / None')}</td><td class="n">${lib.fmt(r[countKey])}</td></tr>`
+    ).join('') + '</tbody></table>';
 }
 
 const COUNTRIES = { IN: 'India', US: 'United States', GB: 'United Kingdom', DE: 'Germany', FR: 'France', NL: 'Netherlands', IE: 'Ireland', BR: 'Brazil', AU: 'Australia', SG: 'Singapore', MY: 'Malaysia', RU: 'Russia', ZA: 'South Africa', JP: 'Japan', CA: 'Canada', AE: 'UAE', PK: 'Pakistan', BD: 'Bangladesh', NG: 'Nigeria', KE: 'Kenya', ES: 'Spain', IT: 'Italy', SE: 'Sweden', CH: 'Switzerland', PL: 'Poland', UA: 'Ukraine', TR: 'Turkey', ID: 'Indonesia', TH: 'Thailand', VN: 'Vietnam', PH: 'Philippines', KR: 'South Korea', TW: 'Taiwan', HK: 'Hong Kong', NZ: 'New Zealand', MX: 'Mexico', AR: 'Argentina', CO: 'Colombia', EG: 'Egypt', IL: 'Israel', FI: 'Finland', NO: 'Norway', DK: 'Denmark', AT: 'Austria', BE: 'Belgium', PT: 'Portugal', CZ: 'Czechia', RO: 'Romania', GR: 'Greece', HU: 'Hungary' };
@@ -85,8 +86,8 @@ function renderDashboard(req, res) {
     '30d': { start: now - 29 * DAY, len: 30 * DAY, label: 'Last 30 days' }
   };
   const { start, len } = ranges[range];
-  const cur = lib.rangeStats(SITE, Math.floor(start / 1000));
-  const prev = lib.rangeStats(SITE, Math.floor((start - len) / 1000));
+  const cur = lib.rangeStats(SITE, Math.floor(start / 1000), Math.floor(now / 1000));
+  const prev = lib.rangeStats(SITE, Math.floor((start - len) / 1000), Math.floor(start / 1000));
   const links = Object.entries(ranges).map(([k, v]) =>
     `<a href="/dashboard?range=${k}"${k === range ? ' class="on"' : ''}>${v.label}</a>`).join('');
 
@@ -105,11 +106,12 @@ function renderDashboard(req, res) {
     .replaceAll('{{PV}}', lib.fmt(cur.pv)).replaceAll('{{PV_TREND}}', trend(cur.pv, prev.pv))
     .replaceAll('{{BOUNCE}}', cur.bounce + '%').replaceAll('{{BOUNCE_TREND}}', trend(cur.bounce, prev.bounce, true))
     .replaceAll('{{SESSIONS}}', lib.fmt(cur.sessions)).replaceAll('{{SESSIONS_TREND}}', trend(cur.sessions, prev.sessions))
+    .replaceAll('{{LIVE}}', lib.currentVisitors(SITE))
     .replaceAll('{{CHART}}', chart)
-    .replaceAll('{{REFS}}', rows(lib.topRefs(SITE, Math.floor(start / 1000)), 'ref'))
-    .replaceAll('{{PAGES}}', rows(lib.topPages(SITE, Math.floor(start / 1000)), 'path'))
-    .replaceAll('{{COUNTRIES}}', rows(lib.topCountries(SITE, Math.floor(start / 1000)).map(r => ({ ...r, country: cname(r.country) })), 'country'))
-    .replaceAll('{{DEVICES}}', rows(lib.topScr(SITE, Math.floor(start / 1000)).map(r => ({ ...r, scr: r.scr[0].toUpperCase() + r.scr.slice(1) })), 'scr'));
+    .replaceAll('{{REFS}}', rows(lib.topRefs(SITE, Math.floor(start / 1000)), 'ref', 'pv', ['Source', 'Visitors']))
+    .replaceAll('{{PAGES}}', rows(lib.topPages(SITE, Math.floor(start / 1000)), 'path', 'pv', ['Page', 'Pageviews']))
+    .replaceAll('{{COUNTRIES}}', rows(lib.topCountries(SITE, Math.floor(start / 1000)).map(r => ({ ...r, country: cname(r.country) })), 'country', 'pv', ['Country', 'Visitors']))
+    .replaceAll('{{DEVICES}}', rows(lib.topScr(SITE, Math.floor(start / 1000)).map(r => ({ ...r, scr: r.scr[0].toUpperCase() + r.scr.slice(1) })), 'scr', 'pv', ['Device', 'Visitors']));
   res.set('Cache-Control', 'no-store');
   res.send(html);
 }

@@ -14,6 +14,9 @@ body{background:var(--bg);color:var(--txt);font:14px/1.5 system-ui,-apple-system
 .mark{width:22px;height:22px;border-radius:6px;background:#4f39f6;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
 .sitebar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:26px}
 .sitename{font-size:20px;font-weight:650;letter-spacing:-.015em}
+.sitebar-right{display:flex;align-items:center;gap:14px}
+.live{display:inline-flex;align-items:center;gap:6px;color:var(--mut);font-size:12px}
+.live i{width:7px;height:7px;border-radius:50%;background:var(--up);box-shadow:0 0 0 3px rgba(0,188,125,.15)}
 .ranges{display:flex;gap:2px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:3px}
 .ranges a{color:var(--mut);text-decoration:none;padding:5px 13px;border-radius:6px;font-size:13px;transition:background .15s,color .15s}
 .ranges a:hover{color:var(--txt)}
@@ -39,6 +42,8 @@ td:last-child{text-align:right;font-variant-numeric:tabular-nums;color:var(--mut
 tr:last-child td{border-bottom:none}
 .empty{color:var(--dim);font-size:13px;padding:10px 2px}
 .chart{width:100%;height:auto;display:block}
+.chart text{font-size:12px;fill:#52525b}
+.chart line{vector-effect:non-scaling-stroke}
 @media (max-width:760px){
   .wrap{padding:20px 14px 48px}
   .sitebar{flex-direction:column;align-items:flex-start;gap:14px}
@@ -58,7 +63,8 @@ tr:last-child td{border-bottom:none}
   <div class="brand"><span class="mark">P</span>Peek</div>
   <div class="sitebar">
     <div class="sitename">{{SITE}}</div>
-    <nav class="ranges" aria-label="Date range">{{RANGE_LINKS}}</nav>
+    <div class="sitebar-right"><span class="live"><i></i>{{LIVE}} now</span>
+    <nav class="ranges" aria-label="Date range">{{RANGE_LINKS}}</nav></div>
   </div>
   <div class="kpis">
     <div class="kpi"><h3>Unique visitors</h3><div class="valrow"><div class="num">{{UV}}</div>{{UV_TREND}}</div></div>

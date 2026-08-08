@@ -1,15 +1,28 @@
 {
-  "project": "Peek - privacy-first web analytics",
-  "bar": "plausible.io/plausible.io, screenshotted at desktop (1440x900) and mobile (390x844), palette sampled from pixels",
-  "phases": {
-    "bar-captured": { "status": "done", "note": "desktop + mobile shots in refs/; palette #09090b / #18181b, accent #3085fe" },
-    "build": { "status": "done", "note": "lib.js, server.js, snippet (353B gzipped), dashboard, seed, test" },
-    "measure": { "status": "done", "note": "snippet 353B gzipped (< 2048); TTFB 0.012s vs plausible 0.358s (refs/measure.txt)" },
-    "round-1": { "status": "done", "note": "tech audit all-pass; desktop A wins 6-0, mobile A wins 3-2. Gaps: chart (bars->area, labels, edge clip), KPI container+dividers, header chrome, table padding, bounce trend inversion, trust-proxy fix" },
-    "round-2": { "status": "run", "note": "all round-1 gaps fixed; re-shooting and re-judging desktop, mobile, chart-panels" }
-  },
+  "project": "peek",
+  "tagline": "Privacy-first web analytics in one Node process",
+  "status": "round 3 — critics dispatched",
   "rounds": [
-    { "name": "Round 1", "verdict": "Technical audit: all 9 pieces pass (snippet 353B gz, daily-rotating hash, bot drop, (site,day) index, 30-min sessions, bounce math, basic auth, honest README, tests green). Two flags fixed: trust-proxy spoofing, bounce trend color. Visual: bar (A) wins desktop 6-0, mobile 3-2. Biggest gaps: chart reads like a debug plot (sharp bars, raw dates, edge clipping on mobile), KPIs float without container/dividers, header lacks chrome, tables cramped." }
+    { "round": 1, "result": "LOST visuals (desktop 0-6, mobile 2-3). Technical audit: all pass, 2 notes (XFF spoof, bounce trend)." },
+    { "round": 2, "result": "Chart+panel headers WON. Lost: table headers, header density, axes (month-first, sparse grid), mobile legibility. Root causes: rangeStats cumulative-window bug (-52% fake trends), Chrome --screenshot drops count column at 390px (capture artifact, not layout)." },
+    { "round": 3, "result": "PENDING — table headers, live chip, day-first labels, niceStep y-axis, CSS-sized chart text, rangeStats end-bound fix, CDP capture pipeline." }
   ],
-  "updated": "2026-08-08T11:05:00Z"
+  "metrics": {
+    "snippet_gzip_bytes": 353,
+    "dashboard_ttfb_ms": 12,
+    "plausible_ttfb_ms": 358,
+    "seed_events_30d": 4925,
+    "seed_uv_30d": 1813
+  },
+  "privacy": "cookieless; visitor = server-side daily-rotating hash of IP+UA+salt; raw IP/UA never stored",
+  "fixes_landed": [
+    "rangeStats + top* queries now bounded [start, end) — trends honest (±1-18%)",
+    "thead with column headers on all four tables",
+    "live visitor chip (green dot, 5-min window)",
+    "chart text CSS-sized 12px (readable at mobile scale)",
+    "niceStep y-axis with k-suffix labels, day-first '2 Aug' dates",
+    "padR 28 — zero edge bleed both viewports",
+    "seed: mild 1.7x spikes, growth toward today",
+    "capture.js: CDP screenshots (CLI flag was dropping count column at 390px)"
+  ]
 }
