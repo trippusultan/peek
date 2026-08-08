@@ -1,11 +1,18 @@
 {
   "project": "peek",
   "tagline": "Privacy-first web analytics in one Node process",
-  "status": "round 3 — critics dispatched",
+  "status": "round 10 — critics dispatched",
   "rounds": [
     { "round": 1, "result": "LOST visuals (desktop 0-6, mobile 2-3). Technical audit: all pass, 2 notes (XFF spoof, bounce trend)." },
     { "round": 2, "result": "Chart+panel headers WON. Lost: table headers, header density, axes (month-first, sparse grid), mobile legibility. Root causes: rangeStats cumulative-window bug (-52% fake trends), Chrome --screenshot drops count column at 390px (capture artifact, not layout)." },
-    { "round": 3, "result": "PENDING — table headers, live chip, day-first labels, niceStep y-axis, CSS-sized chart text, rangeStats end-bound fix, CDP capture pipeline." }
+    { "round": 3, "result": "LOST desktop 0-6 (zero y-tick labels, all-red deltas). MOBILE WON 3-2 (first viewport win). Root cause: SVG text CSS px = viewBox units → 4.4px real at mobile scale." },
+    { "round": 4, "result": "LOST desktop 0-6 (chart parity; KPI/tables/typography). MOBILE WON 4-1. Dual-viewBox chart: mobile labels ~10px real, verified legible." },
+    { "round": 5, "result": "LOST desktop 0-6 ('fixes technically present but imperceptible'). MOBILE SWEPT 5-0. KPI cards + monogram glyphs + share bars shipped." },
+    { "round": 6, "result": "LOST desktop 0-6 BUT chart|B + tables|B — bottom half won, judge: 'stop touching those'. MOBILE SWEPT 5-0. Contrast pass + tabs." },
+    { "round": 7, "result": "Desktop judge hit iteration limit (no verdict). MOBILE WON 4-1 — layout_fit lost again: fold slices primary table row (3rd round docking). Primary KPI accent + current-visitors line landed." },
+    { "round": 8, "result": "LOST desktop 2-4 (header=B, chart=B; tables lost: vertical blue artifact strip + colliding D glyphs). MOBILE SWEPT 5-0 — fold fix closed: single 4-tab card + chart h 140, zero sliced rows." },
+    { "round": 9, "result": "DESKTOP WON 5-1 (header/kpis/chart/spacing/typography) — judge: 'B wins everything else'; tables still lost: Direct/duckduckgo both dark-blue D tiles. MOBILE SWEPT 5-0. Mini-bars + hue tiles + clean integer y-ticks." },
+    { "round": 10, "result": "PENDING — glyph hues by row index (all distinct, verified), compact mobile range pill." }
   ],
   "metrics": {
     "snippet_gzip_bytes": 353,
@@ -16,13 +23,16 @@
   },
   "privacy": "cookieless; visitor = server-side daily-rotating hash of IP+UA+salt; raw IP/UA never stored",
   "fixes_landed": [
-    "rangeStats + top* queries now bounded [start, end) — trends honest (±1-18%)",
-    "thead with column headers on all four tables",
-    "live visitor chip (green dot, 5-min window)",
-    "chart text CSS-sized 12px (readable at mobile scale)",
-    "niceStep y-axis with k-suffix labels, day-first '2 Aug' dates",
-    "padR 28 — zero edge bleed both viewports",
-    "seed: mild 1.7x spikes, growth toward today",
-    "capture.js: CDP screenshots (CLI flag was dropping count column at 390px)"
+    "rangeStats + top* queries bounded [start, end) — trends honest",
+    "thead with column headers; per-table headers",
+    "live 'N current visitors' chip (green dot, 5-min window)",
+    "dual-viewBox SVG chart (readable ~10px labels on mobile)",
+    "niceStep y-axis with integer step*g ticks; day-first '2 Aug' dates",
+    "KPI cards as individual bordered boxes, blue-accented primary (#22222a)",
+    "single 4-tab Traffic card (Sources|Pages|Countries|Devices) — Plausible-style panel",
+    "thin 3px mini-bars (no overlap), hue-coded glyph tiles by row index",
+    "mobile: tables capped at 5 rows + chart h 140 → full table above the fold, zero sliced rows",
+    "capture.js: CDP screenshots (CLI flag dropped count column at 390px)",
+    "seed: growth 0.02 toward today, weekend x0.7 → honest mixed green/red deltas"
   ]
 }
