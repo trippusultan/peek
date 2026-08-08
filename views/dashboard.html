@@ -18,28 +18,32 @@ body{background:var(--bg);color:var(--txt);font:14px/1.5 system-ui,-apple-system
 .live{display:inline-flex;align-items:center;gap:6px;color:var(--mut);font-size:12px}
 .live i{width:7px;height:7px;border-radius:50%;background:var(--up);box-shadow:0 0 0 3px rgba(0,188,125,.15)}
 .ranges{display:flex;gap:2px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:3px}
-.ranges a{color:var(--mut);text-decoration:none;padding:5px 13px;border-radius:6px;font-size:13px;transition:background .15s,color .15s}
+.ranges a{color:#c7c7ce;text-decoration:none;padding:5px 13px;border-radius:6px;font-size:13px;transition:background .15s,color .15s}
 .ranges a:hover{color:var(--txt)}
 .ranges a.on{background:var(--panel2);color:var(--txt)}
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px 6px;margin-bottom:26px}
-.kpi{padding:0 18px}
-.kpi+.kpi{border-left:1px solid var(--line2)}
-.kpi h3{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--dim);font-weight:500;margin-bottom:9px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:26px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px}
+.kpi:first-child{background:var(--panel2);border-color:#303038}
+.kpi h3{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--mut);font-weight:500;margin-bottom:9px}
 .kpi .valrow{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
 .kpi .num{font-size:26px;font-weight:650;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1}
 .tr{display:inline-block;font-size:12px;font-variant-numeric:tabular-nums}
 .tr.up{color:var(--up)}.tr.down{color:var(--down)}.tr.flat{color:var(--dim)}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin-bottom:16px}
-.card h2{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--dim);font-weight:500;margin-bottom:12px}
+.card h2{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--mut);font-weight:500;margin-bottom:12px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 table{width:100%;border-collapse:collapse}
-th{color:var(--dim);font-weight:500;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.06em;padding:0 10px 10px}
-td{padding:10px 10px;border-bottom:1px solid var(--line2);font-size:13px;color:var(--mut)}
+th{color:var(--mut);font-weight:500;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.06em;padding:0 10px 10px}
+td{padding:10px 10px;border-bottom:1px solid var(--line2);font-size:13px;color:var(--mut);position:relative}
 tbody tr{transition:background .12s}
 tbody tr:hover{background:rgba(255,255,255,.02)}
+tbody tr.top td{background:rgba(255,255,255,.03)}
 td:first-child{color:var(--txt)}
 td:last-child{text-align:right;font-variant-numeric:tabular-nums;color:var(--mut)}
 tr:last-child td{border-bottom:none}
+.bar{position:absolute;left:0;top:0;bottom:0;background:rgba(48,133,254,.09);z-index:0}
+.mono{display:inline-flex;width:20px;height:20px;border-radius:5px;background:#232327;color:#d4d4d8;align-items:center;justify-content:center;font-size:11px;font-weight:600;margin-right:10px;vertical-align:-4px;position:relative;z-index:1}
+.nm{position:relative;z-index:1}
 .empty{color:var(--dim);font-size:13px;padding:10px 2px}
 .chart{width:100%;height:auto;display:block}
 .chart text{font-size:12px;fill:#a1a1aa}
@@ -47,13 +51,10 @@ tr:last-child td{border-bottom:none}
 @media (max-width:760px){
   .chart-d{display:none}
   .chart-m{display:block}
-  .wrap{padding:20px 14px 48px}
+  .wrap{padding:20px 14px 72px}
   .sitebar{flex-direction:column;align-items:flex-start;gap:14px}
-  .kpis{grid-template-columns:repeat(2,1fr);padding:14px 4px}
-  .kpi{padding:12px 14px}
-  .kpi+.kpi{border-left:none}
-  .kpi:nth-child(even){border-left:1px solid var(--line2)}
-  .kpi:nth-child(n+3){border-top:1px solid var(--line2)}
+  .kpis{grid-template-columns:repeat(2,1fr);gap:12px}
+  .kpi{padding:14px}
   .kpi .num{font-size:22px}
   .grid2{grid-template-columns:1fr}
   .card{padding:14px 14px}

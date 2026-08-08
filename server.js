@@ -63,10 +63,13 @@ function trend(cur, prev, invert) {
 
 function rows(data, nameKey, countKey = 'pv', headers = ['Source', 'Visitors']) {
   if (!data.length) return `<div class="empty">Nothing yet</div>`;
+  const max = Math.max(1, data[0][countKey]);
   return `<table><thead><tr><th>${headers[0]}</th><th>${headers[1]}</th></tr></thead><tbody>` +
-    data.map(r =>
-      `<tr><td>${esc(r[nameKey] || 'Direct / None')}</td><td class="n">${lib.fmt(r[countKey])}</td></tr>`
-    ).join('') + '</tbody></table>';
+    data.map((r, i) => {
+      const name = r[nameKey] || 'Direct / None';
+      const pct = Math.round((r[countKey] / max) * 100);
+      return `<tr${i === 0 ? ' class="top"' : ''}><td><span class="bar" style="width:${pct}%"></span><span class="mono">${esc((name[0] || '?').toUpperCase())}</span><span class="nm">${esc(name)}</span></td><td class="n">${lib.fmt(r[countKey])}</td></tr>`;
+    }).join('') + '</tbody></table>';
 }
 
 const COUNTRIES = { IN: 'India', US: 'United States', GB: 'United Kingdom', DE: 'Germany', FR: 'France', NL: 'Netherlands', IE: 'Ireland', BR: 'Brazil', AU: 'Australia', SG: 'Singapore', MY: 'Malaysia', RU: 'Russia', ZA: 'South Africa', JP: 'Japan', CA: 'Canada', AE: 'UAE', PK: 'Pakistan', BD: 'Bangladesh', NG: 'Nigeria', KE: 'Kenya', ES: 'Spain', IT: 'Italy', SE: 'Sweden', CH: 'Switzerland', PL: 'Poland', UA: 'Ukraine', TR: 'Turkey', ID: 'Indonesia', TH: 'Thailand', VN: 'Vietnam', PH: 'Philippines', KR: 'South Korea', TW: 'Taiwan', HK: 'Hong Kong', NZ: 'New Zealand', MX: 'Mexico', AR: 'Argentina', CO: 'Colombia', EG: 'Egypt', IL: 'Israel', FI: 'Finland', NO: 'Norway', DK: 'Denmark', AT: 'Austria', BE: 'Belgium', PT: 'Portugal', CZ: 'Czechia', RO: 'Romania', GR: 'Greece', HU: 'Hungary' };
