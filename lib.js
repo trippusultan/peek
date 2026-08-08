@@ -76,10 +76,10 @@ function insertRow(row) {
 
 function rangeStats(site, startTs, endTs = Math.floor(Date.now() / 1000)) {
   const s = db.prepare(
-    'SELECT COUNT(*) pv, COUNT(DISTINCT visitor) uv, COUNT(DISTINCT sess) sessions FROM events WHERE site=? AND ts>=? AND ts<?'
+    'SELECT COUNT(*) pv, COUNT(DISTINCT visitor) uv, COUNT(DISTINCT sess) sessions FROM events WHERE site=? AND ts>=? AND ts<=?'
   ).get(site, startTs, endTs);
   const bounced = db.prepare(
-    'SELECT COUNT(*) c FROM (SELECT sess FROM events WHERE site=? AND ts>=? AND ts<? GROUP BY sess HAVING COUNT(*)=1)'
+    'SELECT COUNT(*) c FROM (SELECT sess FROM events WHERE site=? AND ts>=? AND ts<=? GROUP BY sess HAVING COUNT(*)=1)'
   ).get(site, startTs, endTs).c;
   s.bounced = bounced;
   s.bounce = s.sessions ? Math.round((bounced / s.sessions) * 1000) / 10 : 0;

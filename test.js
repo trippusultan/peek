@@ -50,7 +50,7 @@ const ok = (name) => { n++; console.log('  ok', name); };
 // 4. sessions: 30-min idle cutoff, bounce rate
 {
   const ip = '9.9.9.9', ua = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/126.0.0.0 Safari/537.36';
-  const t = Date.now();
+  const t = Date.now() - 3600000; // hour ago so future-of-now windows still cover r3
   const r1 = lib.record({ site: 't', ip, ua, path: '/', ts: t });
   const r2 = lib.record({ site: 't', ip, ua, path: '/blog', ts: t + 5 * 60000 });
   const r3 = lib.record({ site: 't', ip, ua, path: '/about', ts: t + 36 * 60000 }); // 31 min after r2
@@ -101,7 +101,7 @@ function checkAuth() {
       res2.on('data', d => body += d);
       res2.on('end', () => {
         assert.strictEqual(res2.statusCode, 200);
-        for (const s of ['Unique visitors', 'Bounce rate', 'Top sources', 'Top pages', 'Countries', 'Devices', '<svg']) {
+        for (const s of ['Unique visitors', 'Bounce rate', 'Traffic', 'Sources', 'Pages', 'Countries', 'Devices', '<svg']) {
           assert.ok(body.includes(s), `dashboard includes "${s}"`);
         }
         assert.ok(!body.includes('{{UV}}'), 'tokens replaced');
