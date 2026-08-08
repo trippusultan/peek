@@ -13,9 +13,9 @@ body{background:var(--bg);color:var(--txt);font:14px/1.5 system-ui,-apple-system
 .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px;letter-spacing:-.01em;margin-bottom:20px}
 .mark{width:22px;height:22px;border-radius:6px;background:#4f39f6;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
 .sitebar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:26px}
-.sitename{font-size:20px;font-weight:650;letter-spacing:-.015em}
+.sitename{font-size:20px;font-weight:650;letter-spacing:-.015em;display:flex;align-items:center;gap:14px}
 .sitebar-right{display:flex;align-items:center;gap:14px}
-.live{display:inline-flex;align-items:center;gap:6px;color:var(--mut);font-size:12px}
+.live{display:inline-flex;align-items:center;gap:6px;color:var(--mut);font-size:12px;white-space:nowrap}
 .live i{width:7px;height:7px;border-radius:50%;background:var(--up);box-shadow:0 0 0 3px rgba(0,188,125,.15)}
 .ranges{display:flex;gap:2px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:3px}
 .ranges a{color:#d8d8df;text-decoration:none;padding:5px 13px;border-radius:6px;font-size:13px;transition:background .15s,color .15s}
@@ -25,15 +25,15 @@ body{background:var(--bg);color:var(--txt);font:14px/1.5 system-ui,-apple-system
 .kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px 24px}
 .kpi:first-child{background:#22222a;border-color:#4a4a55}
 .kpi:first-child h3{color:var(--acc)}
-.kpi h3{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:#b4b4bc;font-weight:500;margin-bottom:9px}
-.kpi .valrow{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.kpi h3{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:#c4c4cc;font-weight:500;margin-bottom:9px}
+.kpi .valrow{display:flex;align-items:baseline;gap:12px 10px;flex-wrap:wrap}
 .kpi .num{font-size:26px;font-weight:650;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1}
 .kpi:first-child .num{font-size:30px}
-.tr{display:inline-block;font-size:12px;font-variant-numeric:tabular-nums}
+.tr{display:inline-block;font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap}
 .tr.up{color:var(--up)}.tr.down{color:var(--down)}.tr.flat{color:var(--dim)}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:16px}
 .cardhead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:12px}
-.card h2{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:#b4b4bc;font-weight:500}
+.card h2{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:#c4c4cc;font-weight:500}
 .tabs{display:flex;gap:14px}
 .tabs a{font-size:12px;color:var(--mut);text-decoration:none;padding-bottom:3px;border-bottom:2px solid transparent}
 .tabs a:hover{color:var(--txt)}
@@ -76,9 +76,8 @@ tr.top .mono{background:#2d3a4f;border-color:#3d5570;color:#9cc2ff}
 <div class="wrap">
   <div class="brand"><span class="mark">P</span>Peek</div>
   <div class="sitebar">
-    <div class="sitename">{{SITE}}</div>
-    <div class="sitebar-right"><span class="live"><i></i>{{LIVE}} current visitors</span>
-    <nav class="ranges" aria-label="Date range">{{RANGE_LINKS}}</nav></div>
+    <div class="sitename">{{SITE}} <span class="live"><i></i>{{LIVE}} current visitors</span></div>
+    <nav class="ranges" aria-label="Date range">{{RANGE_LINKS}}</nav>
   </div>
   <div class="kpis">
     <div class="kpi"><h3>Unique visitors</h3><div class="valrow"><div class="num">{{UV}}</div>{{UV_TREND}}</div></div>
