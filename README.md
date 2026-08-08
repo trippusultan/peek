@@ -9,6 +9,20 @@ Built as a judged exercise: the dashboard was iterated against Plausible's own
 live public dashboard (plausible.io/plausible.io) until blind critics picked
 ours. Verdict logs in `progress.json` history / `refs/`.
 
+## Deploy (Render free)
+
+1. Push this repo to GitHub, then on render.com: **New → Blueprint** → pick the repo.
+2. In the service's **Environment** tab set `DASH_PASS` (and a long random `SALT`); `SITE` is the site name shown on the dashboard.
+3. Deploy. The health check is `/health`.
+
+Then drop the snippet into any page (GitHub Pages, etc.) — it beacons back to wherever it was loaded from:
+
+```html
+<script defer data-site="your-site-name" src="https://YOUR-RENDER-URL/s.js"></script>
+```
+
+Real traffic in, dashboard out. Free-tier ceiling: the instance sleeps after ~15 min idle and the SQLite file lives on the instance disk — data survives sleep, but is lost on redeploy/recycle. For durable data, add Render's persistent disk (paid) or a volume host.
+
 ## Honest ceiling
 
 This is a personal-site tool, not Plausible. At serious traffic (say, tens of

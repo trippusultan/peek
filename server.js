@@ -139,6 +139,8 @@ app.get('/progress', (req, res) => {
 });
 app.use('/progress.json', express.static(path.join(__dirname, 'progress.json'), { maxAge: 0 }));
 
+app.get('/health', (req, res) => res.send('ok'));
+
 if (require.main === module) {
   app.listen(PORT, () => console.log(`peek running on http://localhost:${PORT} (dashboard: /dashboard)`));
 }

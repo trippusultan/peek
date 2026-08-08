@@ -1,0 +1,20 @@
+# Render blueprint — deploy: New > Blueprint > pick the repo (or push this file).
+# Free tier: instance sleeps after 15 min idle; DB file lives on the instance
+# disk while awake (lost on redeploy/recycle — the honest ceiling for free).
+services:
+  - type: web
+    name: peek
+    runtime: node
+    plan: free
+    buildCommand: npm ci --omit=dev
+    startCommand: node server.js
+    healthCheckPath: /health
+    envVars:
+      - key: SITE
+        value: demo
+      - key: DASH_USER
+        value: admin
+      - key: DASH_PASS
+        sync: false # set in the Render dashboard (or env group)
+      - key: SALT
+        sync: false
