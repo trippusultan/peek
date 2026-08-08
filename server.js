@@ -69,7 +69,7 @@ function rows(data, nameKey, countKey = 'pv', headers = ['Source', 'Visitors']) 
     data.map((r, i) => {
       const name = r[nameKey] || 'Direct / None';
       const pct = Math.round((r[countKey] / max) * 100);
-      const [bg, fg] = i === 0 ? TINTS[0] : TINTS[(name.length * 31 + name.charCodeAt(0)) % TINTS.length];
+      const [bg, fg] = TINTS[i % TINTS.length];
       return `<tr${i === 0 ? ' class="top"' : ''}><td><span class="bar" style="width:${pct}%"></span><span class="mono" style="background:${bg};border-color:${bg};color:${fg}">${esc((name[0] || '?').toUpperCase())}</span><span class="nm">${esc(name)}</span></td><td class="n">${lib.fmt(r[countKey])}</td></tr>`;
     }).join('') + '</tbody></table>';
 }
