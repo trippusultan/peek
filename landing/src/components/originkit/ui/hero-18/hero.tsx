@@ -440,6 +440,7 @@ export default function Hero() {
             background="transparent"
             lineOptions={{ color: "#7CFC8A", glow: 5 }}
             dotOptions={{ color: "#ffffff", glow: 0.8, count: 5000 }}
+            repel={false}
           />
         </div>
         {/* Blends the hard top edge of the tornado canvas into the content above it — only
