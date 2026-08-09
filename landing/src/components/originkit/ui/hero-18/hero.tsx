@@ -291,21 +291,21 @@ export default function Hero() {
               </div>
             </div>
             <p className={`${lato} text-[15px] text-white tracking-[-0.3px] whitespace-nowrap md:text-[17px]`}>
-              Adaptive Intelligence
+              Cookieless Analytics
             </p>
             <BorderOrbit />
           </div>
           <div className="flex flex-col items-center gap-[14px] text-white md:gap-[16px]">
             <h1 className={`${instrumentSerif} max-w-[280px] font-normal leading-[1.15] text-[34px] tracking-[-0.68px] md:max-w-[460px] md:text-[52px] md:leading-[1.1] md:tracking-[-1.04px]`}>
-              Transform Every Signal Into Action
+              Website analytics without the cookies.
             </h1>
             <p className={`${lato} max-w-[320px] text-[15px] leading-[1.4] opacity-70 md:max-w-[440px] md:text-[18px]`}>
-              A unified AI platform that transforms data into real-time recommendations.
+              One process, one snippet, zero tracking scripts. Real visitors, private by default.
             </p>
           </div>
           <div className="flex items-center gap-[12px] md:gap-[16px]">
             <a
-              href="#explore"
+              href="/dashboard"
               className="relative flex items-center justify-between gap-[8px] overflow-clip rounded-[12px] border-t border-[rgba(255,255,255,0.15)] py-[12px] pl-[18px] pr-[12px] shadow-[0px_3px_6px_0px_rgba(82,82,82,0.1)] transition-[filter] duration-150 hover:brightness-110 md:py-[14px] md:pl-[24px] md:pr-[14px]"
             >
               <div
@@ -317,7 +317,7 @@ export default function Hero() {
                 }}
               />
               <p className={`${lato} relative font-bold text-[14px] text-white tracking-[-0.28px] whitespace-nowrap md:text-[16px]`}>
-                Explore AI
+                View dashboard
               </p>
               <div className="relative shrink-0 size-[18px] md:size-[22px]">
                 <div className="absolute inset-[28.66%_35.71%_23.78%_35.72%]">
@@ -327,11 +327,11 @@ export default function Hero() {
               <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_1px_1px_0px_rgba(255,255,255,0.3)]" />
             </a>
             <a
-              href="#demo"
+              href="https://github.com/trippusultan/peek"
               className="bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.1)] border-solid flex items-center justify-center gap-[10px] rounded-[10px] py-[12px] pl-[18px] pr-[12px] transition-colors duration-150 hover:bg-[rgba(255,255,255,0.08)] hover:border-[rgba(255,255,255,0.2)] md:py-[14px] md:pl-[24px] md:pr-[14px]"
             >
               <p className={`${lato} text-[13px] text-white tracking-[-0.35px] whitespace-nowrap md:text-[14px]`}>
-                Request Demo
+                GitHub
               </p>
               <div className="relative shrink-0 size-[18px] md:size-[22px]">
                 <div className="absolute inset-[28.66%_35.71%_23.78%_35.72%]">
@@ -343,7 +343,7 @@ export default function Hero() {
         </div>
         <div className="flex flex-col items-center gap-[12px] self-stretch">
           <p className={`${interTight} font-light text-[14px] text-white opacity-50 md:text-[16px]`}>
-            Trusted by 5,000+ Teams
+            Zero cookies. Zero third-party scripts.
           </p>
           <LogoTicker className="h-[42px] w-full md:h-[82px]" />
         </div>
@@ -369,7 +369,7 @@ export default function Hero() {
                 </div>
               </div>
               <p className={`${lato} font-normal leading-[normal] relative shrink-0 text-[17px] text-white tracking-[-0.34px] whitespace-nowrap`}>
-                Adaptive Intelligence
+                Cookieless Analytics
               </p>
             </div>
             <BorderOrbit />
@@ -377,15 +377,15 @@ export default function Hero() {
           <div className="content-stretch flex flex-col gap-[32px] items-start relative shrink-0">
             <div className="content-stretch flex flex-col gap-[16px] items-start relative shrink-0 text-white">
               <h1 className={`${instrumentSerif} font-normal leading-[1.1] relative shrink-0 text-[62px] tracking-[-1.24px] w-[502px]`}>
-                Transform Every Signal Into Action
+                Website analytics without the cookies.
               </h1>
               <p className={`${lato} font-normal leading-[normal] opacity-70 relative shrink-0 text-[20px] tracking-[-0.4px] w-[474px]`}>
-                A unified AI platform that transforms data into real-time recommendations.
+                One process, one snippet, zero tracking scripts. Real visitors, private by default.
               </p>
             </div>
             <div className="content-stretch flex gap-[16px] items-center relative shrink-0">
               <a
-                href="#explore"
+                href="/dashboard"
                 className="border-[rgba(255,255,255,0.15)] border-solid border-t content-stretch flex items-center justify-between overflow-clip pl-[24px] pr-[14px] py-[14px] relative rounded-[12px] shadow-[0px_63px_18px_0px_rgba(82,82,82,0),0px_40px_16px_0px_rgba(82,82,82,0.01),0px_23px_14px_0px_rgba(82,82,82,0.05),0px_10px_10px_0px_rgba(82,82,82,0.09),0px_3px_6px_0px_rgba(82,82,82,0.1)] shrink-0 w-[136px] transition-[filter] duration-150 hover:brightness-110"
               >
                 <div
@@ -397,7 +397,7 @@ export default function Hero() {
                   }}
                 />
                 <p className={`${lato} font-bold leading-[1.5] relative shrink-0 text-[16px] text-white tracking-[-0.32px] whitespace-nowrap`}>
-                  Explore AI
+                  View dashboard
                 </p>
                 <div className="relative shrink-0 size-[22px]">
                   <div className="absolute inset-[28.66%_35.71%_23.78%_35.72%]">
@@ -407,11 +407,11 @@ export default function Hero() {
                 <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_1px_1px_0px_rgba(255,255,255,0.3)]" />
               </a>
               <a
-                href="#demo"
+                href="https://github.com/trippusultan/peek"
                 className="bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.1)] border-solid content-stretch flex gap-[10px] h-full items-center justify-center pl-[24px] pr-[14px] py-[14px] relative rounded-[10px] shrink-0 transition-colors duration-150 hover:bg-[rgba(255,255,255,0.08)] hover:border-[rgba(255,255,255,0.2)]"
               >
                 <p className={`${lato} font-normal leading-[1.5] relative shrink-0 text-[14px] text-white tracking-[-0.42px] whitespace-nowrap`}>
-                  Request Demo
+                  GitHub
                 </p>
                 <div className="relative shrink-0 size-[22px]">
                   <div className="absolute inset-[28.66%_35.71%_23.78%_35.72%]">
@@ -424,7 +424,7 @@ export default function Hero() {
         </div>
         <div className="content-stretch flex flex-col gap-[8px] items-start relative shrink-0 w-full">
           <p className={`${interTight} font-light leading-[1.3] opacity-50 relative shrink-0 text-[16px] text-white w-full`}>
-            Trusted by 5,000+ Teams
+            Zero cookies. Zero third-party scripts.
           </p>
           <LogoTicker className="h-[85px] w-full" />
         </div>
