@@ -7,7 +7,8 @@ import DirectionHover from './components/DirectionHover.tsx'
 import ShinyPill from './components/ShinyPill.tsx'
 import SpotlightText from './components/SpotlightText.tsx'
 import Globe from './components/globe.tsx'
-import Vortex from './components/tornado.tsx'
+import Vortex10 from './components/tornado-v10.tsx'
+import Navbar from './components/Navbar.jsx'
 
 const fmt = n => n.toLocaleString('en-US')
 const MONO = 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace'
@@ -88,20 +89,36 @@ export default function App() {
 
   return (
     <div className="page">
-      <nav>
-        <div className="nav-inner">
-          <a className="brand" href="/"><i></i>peek</a>
-          <div className="nav-links">
-            <span className="chip" title="Visitors on the dashboard right now"><i></i><b>{live}</b> live</span>
-            <a href="https://github.com/trippusultan/peek">GitHub</a>
-            <a href="/dashboard">Dashboard</a>
-          </div>
-        </div>
-      </nav>
+      <Navbar live={live} />
 
       <header className="hero">
+        <div className="hero-copy">
+          <p className="eyebrow"><SpotlightText text="COOKIELESS WEB ANALYTICS" brightColor="#f5f5f5" dimColor="rgba(245,245,245,0.28)" maskSize={120} /></p>
+          <OrigamiUnfold
+            tag="h1"
+            text="Website analytics without the cookies."
+            color="#f5f5f5"
+            font={{ fontFamily: SANS, fontWeight: 800, fontSize: 'clamp(38px, 4.6vw, 60px)', lineHeight: '1.04em', letterSpacing: '-0.045em', textAlign: 'left' }}
+            stagger={0.02}
+            startRotateY={-90}
+            startOpacity={0}
+            perspective={1400}
+          />
+          <p className="sub">One process, one snippet, zero tracking scripts. Real visitors, private by default.</p>
+          <div className="hero-ctas">
+            <MagneticButton label="View dashboard" link="/dashboard" fill="#f5f5f5" textColor="#0a0a0a" sweepColor="#e8e8e8" sweepTextColor="#0a0a0a" paddingX={26} paddingY={14} radius={8} border={false} font={{ fontFamily: SANS, fontWeight: 650, fontSize: 15, lineHeight: '1em', letterSpacing: '-0.01em', textAlign: 'left' }} />
+            <a className="btn btn-ghost" href="https://github.com/trippusultan/peek">GitHub</a>
+          </div>
+          <div className="hero-spec" aria-label="peek in numbers">
+            <div className="srow"><span>Process</span><b>1</b></div>
+            <div className="srow"><span>Snippet</span><b>353 B</b></div>
+            <div className="srow"><span>Dashboard TTFB</span><b>12 ms</b></div>
+            <div className="srow"><span>Cookies</span><b>0</b></div>
+            <div className="srow"><span>External requests</span><b>0</b></div>
+          </div>
+        </div>
         <div className="hero-vortex" aria-hidden="true">
-          <Vortex
+          <Vortex10
             background="#0a0a0a"
             topRadius={360}
             waistRadius={50}
@@ -120,31 +137,6 @@ export default function App() {
             repelOptions={{ radius: 160, strength: 0.35 }}
             style={{ width: '100%', height: '100%' }}
           />
-        </div>
-        <div className="hero-inner">
-          <p className="eyebrow"><SpotlightText text="COOKIELESS WEB ANALYTICS" brightColor="#f5f5f5" dimColor="rgba(245,245,245,0.28)" maskSize={120} /></p>
-          <OrigamiUnfold
-            tag="h1"
-            text="Website analytics without the cookies."
-            color="#f5f5f5"
-            font={{ fontFamily: SANS, fontWeight: 800, fontSize: 'clamp(40px, 5vw, 64px)', lineHeight: '1.04em', letterSpacing: '-0.045em', textAlign: 'left' }}
-            stagger={0.02}
-            startRotateY={-90}
-            startOpacity={0}
-            perspective={1400}
-          />
-          <p className="sub">One process, one snippet, zero tracking scripts. Real visitors, private by default.</p>
-          <div className="hero-ctas">
-            <MagneticButton label="View dashboard" link="/dashboard" fill="#f5f5f5" textColor="#0a0a0a" sweepColor="#e8e8e8" sweepTextColor="#0a0a0a" paddingX={26} paddingY={14} radius={8} border={false} font={{ fontFamily: SANS, fontWeight: 650, fontSize: 15, lineHeight: '1em', letterSpacing: '-0.01em', textAlign: 'left' }} />
-            <a className="btn btn-ghost" href="https://github.com/trippusultan/peek">GitHub</a>
-          </div>
-        </div>
-        <div className="hero-spec" aria-label="peek in numbers">
-          <div className="srow"><span>Process</span><b>1</b></div>
-          <div className="srow"><span>Snippet</span><b>353 B</b></div>
-          <div className="srow"><span>Dashboard TTFB</span><b>12 ms</b></div>
-          <div className="srow"><span>Cookies</span><b>0</b></div>
-          <div className="srow"><span>External requests</span><b>0</b></div>
         </div>
       </header>
 
@@ -185,7 +177,7 @@ export default function App() {
         </div>
       </section>
 
-      <section className="features container">
+      <section className="features container" id="features">
         <h2>Built to ask for nothing.</h2>
         <div className="fgrid">
           {FEATURES.map((f, i) => (
