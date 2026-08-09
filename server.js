@@ -64,7 +64,7 @@ function trend(cur, prev, invert) {
 function rows(data, nameKey, countKey = 'pv', headers = ['Source', 'Visitors']) {
   if (!data.length) return `<div class="empty">Nothing yet</div>`;
   const max = Math.max(1, data[0][countKey]);
-  const TINTS = [['#2d3a4f', '#9cc2ff'], ['#3a2d4f', '#c9a6ff'], ['#2d4f3a', '#9fe8b0'], ['#4f3a2d', '#ffcf9e'], ['#4f2d3a', '#ffa8c0'], ['#3a4f2d', '#d2e89f']];
+  const TINTS = [['#242424', '#f5f5f5'], ['#1e1e1e', '#d4d4d4'], ['#2c2c2c', '#e8e8e8'], ['#181818', '#c0c0c0'], ['#303030', '#ededed'], ['#141414', '#b5b5b5']];
   return `<table><thead><tr><th>${headers[0]}</th><th>${headers[1]}</th></tr></thead><tbody>` +
     data.map((r, i) => {
       const name = r[nameKey] || 'Direct / None';
@@ -143,8 +143,18 @@ app.get('/api/live', (req, res) => {
   res.set('Cache-Control', 'no-store');
   res.json({ n: lib.currentVisitors(SITE) });
 });
-// landing page + product screenshots (index.html served at /)
-app.use(express.static(path.join(__dirname, 'public'), { maxAge: 3600 }));
+// 7d stats for the landing band (auth-free, real data)
+app.get('/api/stats', (req, res) => {
+  const now = Math.floor(Date.now() / 1000);
+  const wk = lib.rangeStats(SITE, now - 6 * 86400, now);
+  res.set('Cache-Control', 'no-store');
+  res.json({ live: lib.currentVisitors(SITE), pv: wk.pv, uv: wk.uv, bounce: wk.bounce, sessions: wk.sessions });
+});
+// landing page + product screenshots (index.html served at /; html never cached so updates show instantly)
+app.use(express.static(path.join(__dirname, 'public'), {
+  maxAge: 3600,
+  setHeaders: (res, p) => { if (p.endsWith('.html')) res.setHeader('Cache-Control', 'no-store'); }
+}));
 
 app.get('/health', (req, res) => res.send('ok'));
 

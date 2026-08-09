@@ -172,10 +172,10 @@ function buildChart(points, mode, { w, h, padL, padR, padT, padB, cls, gid, nX }
   const X = i => padL + (points.length === 1 ? iw / 2 : (i / (points.length - 1)) * iw);
   const Y = v => padT + ih - (v / max) * ih;
   let out = '';
-  out += `<line x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT + ih}" stroke="#3a3a42" stroke-width="1"/>`;
+  out += `<line x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT + ih}" stroke="#2a2a2a" stroke-width="1"/>`;
   for (let g = 0; g * step <= max; g++) {
     const v = step * g, y = Y(v);
-    out += `<line x1="${padL}" y1="${y}" x2="${w - padR}" y2="${y}" stroke="#3a3a42" stroke-width="1"/>`;
+    out += `<line x1="${padL}" y1="${y}" x2="${w - padR}" y2="${y}" stroke="#2a2a2a" stroke-width="1"/>`;
     out += `<text x="${padL - 9}" y="${y + 4}" text-anchor="end">${fmt(v)}</text>`;
   }
   const pts = points.map((p, i) => [X(i), Y(p.uv)]);
@@ -187,9 +187,9 @@ function buildChart(points, mode, { w, h, padL, padR, padT, padB, cls, gid, nX }
     d += ` C ${c1x} ${c1y}, ${c2x} ${c2y}, ${p2[0]} ${p2[1]}`;
   }
   const area = `${d} L ${pts[pts.length - 1][0]} ${padT + ih} L ${pts[0][0]} ${padT + ih} Z`;
-  out += `<defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3085fe" stop-opacity="0.32"/><stop offset="1" stop-color="#3085fe" stop-opacity="0"/></linearGradient></defs>`;
+  out += `<defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f5f5f5" stop-opacity="0.32"/><stop offset="1" stop-color="#f5f5f5" stop-opacity="0"/></linearGradient></defs>`;
   out += `<path d="${area}" fill="url(#${gid})"/>`;
-  out += `<path d="${d}" fill="none" stroke="#3085fe" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+  out += `<path d="${d}" fill="none" stroke="#f5f5f5" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
   points.forEach((p, i) => {
     const label = mode === 'hour' ? `${String(p.h).padStart(2, '0')}:00` : p.day;
     out += `<circle cx="${X(i)}" cy="${Y(p.uv)}" r="3" fill="transparent"><title>${label} - ${fmt(p.uv)} visitors</title></circle>`;

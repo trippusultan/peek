@@ -5,17 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>peek - website analytics without the cookies</title>
 <meta name="description" content="A one-process, privacy-first web analytics server. Drop in a 353 byte snippet, watch real visitors appear. No cookies, no third-party scripts, no data leaving your server.">
-<meta name="theme-color" content="#09090b">
+<meta name="theme-color" content="#0a0a0a">
 <meta property="og:title" content="peek - website analytics without the cookies">
 <meta property="og:description" content="A one-process, privacy-first web analytics server. No cookies, no third-party scripts, no data leaving your server.">
 <style>
-/* tokens - locked to the dashboard's own palette (PIL-sampled ground truth) */
-/* shape rule: surfaces 16px, buttons/inputs 8px. color rule: accent #3085fe for links/glows,
-   button fill #2563eb (AA 5.2:1 with white text), up #00bc7d only for live state. */
+/* black & white matte: single monochrome scale, no hue anywhere.
+   shape rule: surfaces 16px, buttons/inputs 8px. color rule: accent = white (#f5f5f5),
+   bright = up, dim = down. one deliberate inversion: the white band section. */
 :root{
-  --bg:#09090b; --panel:#18181b; --panel2:#121215; --line:#27272a;
-  --text:#e4e4e7; --muted:#a1a1aa; --dim:#82828b;
-  --accent:#3085fe; --accent-light:#9cc2ff; --btn:#2563eb; --up:#00bc7d;
+  --bg:#0a0a0a; --panel:#141414; --panel2:#1a1a1a; --line:#262626; --line2:#1e1e1e;
+  --text:#f5f5f5; --muted:#a3a3a3; --dim:#747474;
   --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   --radius-card:16px; --radius-btn:8px;
   --ease:cubic-bezier(.16,1,.3,1);
@@ -23,47 +22,48 @@
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
-::selection{background:rgba(48,133,254,.35)}
-a{color:var(--accent);text-decoration:none}
-:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+::selection{background:rgba(245,245,245,.85);color:#0a0a0a}
+a{color:var(--text);text-decoration:none}
+:focus-visible{outline:2px solid var(--text);outline-offset:3px;border-radius:4px}
 .container{max-width:1120px;margin:0 auto;padding:0 24px}
 
 /* nav */
-nav{position:sticky;top:0;z-index:10;background:rgba(9,9,11,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+nav{position:sticky;top:0;z-index:10;background:rgba(10,10,10,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
 .nav-inner{max-width:1120px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
-.brand{font-weight:650;letter-spacing:-.02em;font-size:17px;color:var(--text)}
-.brand i{display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--accent);margin-right:9px;transform:translateY(-1px)}
+.brand{display:flex;align-items:center;gap:9px;font-weight:700;letter-spacing:-.02em;font-size:17px;color:var(--text)}
+.brand i{width:10px;height:10px;border-radius:2px;background:var(--text)}
 .nav-links{display:flex;align-items:center;gap:28px}
 .nav-links a{color:var(--muted);font-size:14px;transition:color .2s}
 .nav-links a:hover{color:var(--text)}
-/* live chip: real data from /api/live, dot = real server status */
+/* live chip: real data from /api/live, white dot = real server status */
 .chip{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:12.5px;color:var(--dim);border:1px solid var(--line);border-radius:var(--radius-btn);padding:4px 10px}
-.chip i{width:6px;height:6px;border-radius:50%;background:var(--up);animation:pulse 2.4s var(--ease) infinite}
+.chip i{width:6px;height:6px;border-radius:50%;background:var(--text);animation:pulse 2.4s var(--ease) infinite}
 .chip b{color:var(--text);font-weight:600}
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(0,188,125,.45)}70%{box-shadow:0 0 0 5px rgba(0,188,125,0)}100%{box-shadow:0 0 0 0 rgba(0,188,125,0)}}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(245,245,245,.45)}70%{box-shadow:0 0 0 5px rgba(245,245,245,0)}100%{box-shadow:0 0 0 0 rgba(245,245,245,0)}}
 
-/* hero: split - copy left, real product shot right, faint dot-grid texture */
-.hero{display:grid;grid-template-columns:1fr 1.15fr;gap:56px;align-items:center;padding:88px 0 72px;min-height:100svh;position:relative}
+/* hero: editorial split - manifesto copy left, mono spec sheet right */
+.hero{display:grid;grid-template-columns:1.25fr .75fr;gap:72px;align-items:end;padding:104px 0 72px;min-height:100svh;position:relative}
 .hero::before{content:"";position:absolute;inset:0;pointer-events:none;
-  background-image:radial-gradient(rgba(255,255,255,.06) 1px,transparent 1px);background-size:28px 28px;
-  -webkit-mask-image:radial-gradient(ellipse 75% 65% at 68% 30%,#000 20%,transparent 75%);
-  mask-image:radial-gradient(ellipse 75% 65% at 68% 30%,#000 20%,transparent 75%)}
+  background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1px);background-size:30px 30px;
+  -webkit-mask-image:radial-gradient(ellipse 70% 60% at 30% 20%,#000 10%,transparent 70%);
+  mask-image:radial-gradient(ellipse 70% 60% at 30% 20%,#000 10%,transparent 70%)}
 .hero>*{position:relative}
-.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent-light);margin-bottom:18px}
-.hero h1{font-size:clamp(34px,4.6vw,54px);line-height:1.05;letter-spacing:-.035em;font-weight:700;max-width:11ch}
-.hero h1 span{color:var(--accent)}
-.hero p{color:var(--muted);font-size:17px;max-width:44ch;margin:22px 0 34px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:22px}
+.hero h1{font-size:clamp(44px,6vw,72px);line-height:.98;letter-spacing:-.045em;font-weight:800;max-width:12ch}
+.hero h1 span{border-bottom:3px solid var(--text);padding-bottom:2px}
+.hero p{color:var(--muted);font-size:17px;max-width:44ch;margin:26px 0 36px}
 .hero-ctas{display:flex;gap:14px;align-items:center}
-.btn{display:inline-block;border-radius:var(--radius-btn);font-weight:600;font-size:15px;padding:12px 22px;transition:transform .15s var(--ease),background .2s,box-shadow .2s,border-color .2s}
+.btn{display:inline-block;border-radius:var(--radius-btn);font-weight:650;font-size:15px;padding:12px 22px;transition:transform .15s var(--ease),background .2s,box-shadow .2s,border-color .2s}
 .btn:active{transform:translateY(1px) scale(.98)}
-.btn-primary{background:var(--btn);color:#fff}
-.btn-primary:hover{box-shadow:0 0 0 3px rgba(48,133,254,.28);transform:translateY(-1px)}
-.btn-primary:active{transform:translateY(1px) scale(.98)}
-.btn-ghost{color:var(--text);border:1px solid var(--line);background:transparent}
-.btn-ghost:hover{border-color:#3f3f46;background:var(--panel);transform:translateY(-1px)}
-.hero-fig{position:relative}
-.hero-fig img{width:100%;border-radius:var(--radius-card);border:1px solid var(--line);display:block}
-.hero-fig::after{content:"";position:absolute;inset:-32px -24px -24px;background:radial-gradient(ellipse at 70% 20%,rgba(48,133,254,.14),transparent 60%);z-index:-1}
+.btn-primary{background:var(--text);color:#0a0a0a}
+.btn-primary:hover{background:#e8e8e8;transform:translateY(-1px)}
+.btn-ghost{color:var(--text);border:1px solid #3a3a3a;background:transparent}
+.btn-ghost:hover{border-color:var(--text);background:var(--panel);transform:translateY(-1px)}
+/* spec sheet: mono metadata, hairline rows */
+.spec{border-top:1px solid var(--line)}
+.srow{display:flex;justify-content:space-between;align-items:baseline;gap:24px;padding:13px 2px;border-bottom:1px solid var(--line)}
+.srow span{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--dim)}
+.srow b{font-family:var(--mono);font-size:15px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums}
 
 /* entrance stagger (reduced-motion gated) */
 .rise{animation:rise .8s var(--ease) both}
@@ -74,48 +74,55 @@ nav{position:sticky;top:0;z-index:10;background:rgba(9,9,11,.85);backdrop-filter
 .reveal{opacity:0;transform:translateY(20px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
 .reveal.in{opacity:1;transform:none}
 
-/* features: asymmetric 4-cell grid, varied cells */
-.features{padding:96px 0}
-.features h2{font-size:clamp(26px,3vw,36px);letter-spacing:-.025em;font-weight:700;margin-bottom:44px;max-width:18ch}
-.fgrid{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:16px}
-.fcard{border:1px solid var(--line);border-radius:var(--radius-card);padding:30px;background:var(--panel);min-height:210px;display:flex;flex-direction:column;transition:transform .25s var(--ease),border-color .25s}
-.fcard:hover{transform:translateY(-3px);border-color:rgba(48,133,254,.45)}
-.fcard h3{font-size:18px;font-weight:650;letter-spacing:-.01em;margin-bottom:10px}
-.fcard p{color:var(--muted);font-size:14.5px}
-.fcard .mono{font-family:var(--mono);font-size:13px;color:var(--dim);margin-top:auto;padding-top:18px}
-.tint-blue{background:linear-gradient(160deg,rgba(48,133,254,.16),var(--panel) 65%);border-color:rgba(48,133,254,.3)}
-.tint-blue h3{color:var(--accent-light)}
-.metric{font-family:var(--mono);font-size:40px;letter-spacing:-.04em;font-weight:600;color:var(--accent);line-height:1;margin-bottom:14px}
-.metric small{font-size:13px;color:var(--muted);font-weight:400;letter-spacing:0;display:block;margin-top:8px}
-.fcard.imgcell{padding:0;overflow:hidden;border:0;background:none;min-height:0}
-.fcard.imgcell:hover{transform:translateY(-3px)}
-.fcard.imgcell img{width:100%;height:100%;object-fit:cover;border-radius:var(--radius-card);border:1px solid var(--line);transition:transform .5s var(--ease)}
-.fcard.imgcell:hover img{transform:scale(1.02)}
+/* product: full-width real dashboard shot in a browser frame */
+.product{padding:96px 0 0}
+.browser{border:1px solid var(--line);border-radius:var(--radius-card);overflow:hidden;background:var(--panel2)}
+.b-bar{display:flex;align-items:center;gap:6px;padding:9px 12px;border-bottom:1px solid var(--line);background:var(--panel)}
+.b-dot{width:9px;height:9px;border-radius:50%;background:#3a3a3a}
+.b-url{flex:1;margin-left:8px;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:3px 10px;font-family:var(--mono);font-size:11px;color:var(--dim);text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.browser img{width:100%;display:block}
+.pcap{font-family:var(--mono);font-size:12px;color:var(--dim);text-align:center;margin-top:14px}
+
+/* live stats band: REAL numbers from /api/stats */
+.stats{border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:96px}
+.stats-inner{max-width:1120px;margin:0 auto;padding:26px 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.stat{display:flex;flex-direction:column;gap:7px}
+.sl{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--dim)}
+.sv{font-family:var(--mono);font-size:30px;font-weight:600;letter-spacing:-.02em;color:var(--text);line-height:1}
+.su{font-family:var(--mono);color:var(--dim);font-size:16px;font-weight:400}
+
+/* features: 2x2 hairline grid, no cards */
+.features{padding:96px 0 40px}
+.features h2{font-size:clamp(28px,3.4vw,40px);letter-spacing:-.03em;font-weight:800;margin-bottom:0}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--line);margin-top:48px}
+.fcell{padding:34px 0;border-bottom:1px solid var(--line)}
+.fcell:nth-child(even){padding-left:48px;border-left:1px solid var(--line)}
+.fcell h3{font-size:18px;font-weight:700;letter-spacing:-.01em;margin-bottom:10px}
+.fcell p{color:var(--muted);font-size:14.5px;max-width:40ch}
+.fcell .mono{font-family:var(--mono);font-size:12.5px;color:var(--dim);margin-top:18px;padding-top:14px;border-top:1px solid var(--line2)}
 
 /* how it works: vertical list, verb-noun steps, real snippet */
 .how{padding:96px 0;border-top:1px solid var(--line)}
-.how h2{font-size:clamp(26px,3vw,36px);letter-spacing:-.025em;font-weight:700;margin-bottom:48px}
+.how h2{font-size:clamp(28px,3.4vw,40px);letter-spacing:-.03em;font-weight:800;margin-bottom:48px}
 .steps{display:grid;gap:0;max-width:760px}
 .step{display:grid;grid-template-columns:44px 1fr;gap:20px;padding:26px 0;border-top:1px solid var(--line);transition:background .2s}
 .step:last-child{border-bottom:1px solid var(--line)}
-.step:hover{background:rgba(48,133,254,.04)}
-.step .n{font-family:var(--mono);color:var(--accent);font-size:15px;padding-top:4px}
-.step h3{font-size:17px;font-weight:650}
+.step:hover{background:rgba(255,255,255,.03)}
+.step .n{font-family:var(--mono);color:var(--text);font-size:15px;padding-top:4px}
+.step h3{font-size:17px;font-weight:700}
 .step p{color:var(--muted);font-size:14.5px;margin-top:4px}
 .code{margin-top:14px;background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius-card);padding:14px 16px;overflow-x:auto}
 .code code{font-family:var(--mono);font-size:13px;color:var(--muted);white-space:pre}
 
-/* privacy band: full-width statement */
-.privacy{padding:88px 0;border-top:1px solid var(--line)}
-.privacy-inner{border:1px solid var(--line);border-radius:var(--radius-card);background:linear-gradient(180deg,var(--panel),var(--bg));padding:56px 48px;text-align:center}
-.privacy h2{font-size:clamp(24px,2.8vw,34px);letter-spacing:-.025em;font-weight:700;margin-bottom:16px}
-.privacy p{color:var(--muted);max-width:56ch;margin:0 auto;font-size:15.5px}
-.privacy p strong{color:var(--up);font-weight:600}
-
-/* closing CTA */
-.cta{padding:40px 0 110px;text-align:center}
-.cta h2{font-size:clamp(26px,3vw,38px);letter-spacing:-.03em;font-weight:700;margin-bottom:26px}
-.cta .btn{font-size:16px;padding:14px 30px}
+/* white band: the one deliberate inversion */
+.white{background:var(--text);color:#0a0a0a;padding:104px 0;border-top:1px solid var(--line)}
+.w-inner{max-width:1120px;margin:0 auto;padding:0 24px;text-align:center}
+.white h2{font-size:clamp(32px,4.4vw,48px);letter-spacing:-.035em;font-weight:800;line-height:1.05}
+.white p{color:#4d4d4d;max-width:52ch;margin:20px auto 34px;font-size:16px}
+.btn-dark{background:#0a0a0a;color:var(--text)}
+.btn-dark:hover{background:#262626;transform:translateY(-1px)}
+.w-phone{margin:60px auto 0;max-width:230px;border:1px solid #d6d6d6;border-radius:var(--radius-card);overflow:hidden}
+.w-phone img{width:100%;display:block}
 
 /* footer */
 footer{border-top:1px solid var(--line);padding:26px 0}
@@ -124,15 +131,18 @@ footer{border-top:1px solid var(--line);padding:26px 0}
 .foot a:hover{color:var(--text)}
 
 @media (max-width:900px){
-  .hero{grid-template-columns:1fr;gap:40px;padding:56px 0;min-height:0}
+  .hero{grid-template-columns:1fr;gap:48px;padding:64px 0 56px;min-height:0}
   .hero::before{display:none}
-  .hero-fig::after{display:none}
-  .fgrid{grid-template-columns:1fr;grid-auto-rows:auto}
-  .fcard{min-height:0}
-  .fcard.imgcell{min-height:320px}
+  .spec{max-width:440px}
+  .fgrid{grid-template-columns:1fr}
+  .fcell:nth-child(even){padding-left:0;border-left:0}
+  .stats-inner{grid-template-columns:1fr 1fr}
+  .product{padding:72px 0 0}
 }
 @media (max-width:640px){
   .chip{display:none}
+  .stats-inner{padding:20px 24px;gap:20px 12px}
+  .hero h1{font-size:clamp(38px,11vw,52px)}
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
@@ -160,33 +170,60 @@ footer{border-top:1px solid var(--line);padding:26px 0}
     <p class="rise d2">One process, one snippet, zero tracking scripts. Real visitors, private by default.</p>
     <div class="hero-ctas rise d3">
       <a class="btn btn-primary" href="/dashboard">View dashboard</a>
-      <a class="btn btn-ghost" href="https://github.com/trippusultan/peek">Source on GitHub</a>
+      <a class="btn btn-ghost" href="https://github.com/trippusultan/peek">GitHub</a>
     </div>
   </div>
-  <figure class="hero-fig rise d4">
-    <img src="/peek-dashboard.png" alt="The peek dashboard: visitor trend chart, four KPI cards and a traffic table in a dark interface" width="1440" height="900" fetchpriority="high">
-  </figure>
+  <div class="spec rise d2" aria-label="peek in numbers">
+    <div class="srow"><span>Process</span><b>1</b></div>
+    <div class="srow"><span>Snippet</span><b>353 B</b></div>
+    <div class="srow"><span>Dashboard TTFB</span><b>12 ms</b></div>
+    <div class="srow"><span>Cookies</span><b>0</b></div>
+    <div class="srow"><span>External requests</span><b>0</b></div>
+  </div>
 </header>
+
+<section class="product container">
+  <div class="browser reveal">
+    <div class="b-bar">
+      <span class="b-dot"></span><span class="b-dot"></span><span class="b-dot"></span>
+      <span class="b-url">peek-a6sg.onrender.com/dashboard</span>
+    </div>
+    <img src="/peek-dashboard.png" alt="The peek dashboard: visitor trend chart, four KPI cards and a traffic table in a dark interface" width="1440" height="900" fetchpriority="high">
+  </div>
+  <p class="pcap reveal">The live dashboard. Same screen behind the auth gate.</p>
+</section>
+
+<section class="stats">
+  <div class="stats-inner reveal">
+    <div class="stat"><span class="sl">Current visitors</span><span class="sv" id="st-live">0</span></div>
+    <div class="stat"><span class="sl">Pageviews (7d)</span><span class="sv" id="st-pv">-</span></div>
+    <div class="stat"><span class="sl">Visitors (7d)</span><span class="sv" id="st-uv">-</span></div>
+    <div class="stat"><span class="sl">Bounce rate (7d)</span><span class="sv" id="st-bounce">-<span class="su">%</span></span></div>
+  </div>
+</section>
 
 <section class="features container">
   <h2 class="reveal">Built to ask for nothing.</h2>
   <div class="fgrid">
-    <div class="fcard tint-blue reveal">
+    <div class="fcell reveal">
       <h3>Cookieless by design</h3>
       <p>Visitor identity is a daily-rotating hash of IP and user agent, kept entirely server-side. No cookies, no consent banners, no fingerprinting.</p>
       <div class="mono">identity = hash(ip + ua + salt) / rotates daily</div>
     </div>
-    <div class="fcard reveal">
-      <div class="metric">353 B<small>tracking snippet, gzipped</small></div>
-      <p>One line of JavaScript loaded from your own domain. It never touches a third-party server.</p>
+    <div class="fcell reveal">
+      <h3>353 B snippet</h3>
+      <p>One line of JavaScript loaded from your own domain. It never touches a third-party server, ever.</p>
+      <div class="mono">one line of JS / gzipped / server-relative</div>
     </div>
-    <div class="fcard imgcell reveal">
-      <img src="/peek-mobile.png" alt="The peek dashboard on a phone: KPI cards and a traffic table fit above the fold" width="390" height="844" loading="lazy">
-    </div>
-    <div class="fcard reveal">
+    <div class="fcell reveal">
       <h3>One process</h3>
       <p>Express, geoip-lite and SQLite in a single Node server. Nothing to orchestrate, no queue, no warehouse.</p>
-      <div class="mono">node server.js / dashboard TTFB 12 ms</div>
+      <div class="mono">node server.js / SQLite on disk</div>
+    </div>
+    <div class="fcell reveal">
+      <h3>Realtime</h3>
+      <p>The live counter and the daily chart update on every request. No batch jobs, no polling, no stale numbers.</p>
+      <div class="mono">current visitors / updates per request</div>
     </div>
   </div>
 </section>
@@ -211,18 +248,15 @@ footer{border-top:1px solid var(--line);padding:26px 0}
   </div>
 </section>
 
-<section class="privacy">
-  <div class="container">
-    <div class="privacy-inner reveal">
-      <h2>Your data stays yours.</h2>
-      <p>Peek makes no external requests and keeps every record in a SQLite file on your own server. There is no account, no cloud, and nothing to sell. The only promise it makes is <strong>the one it cannot break</strong>.</p>
-    </div>
+<section class="white">
+  <div class="w-inner">
+    <h2 class="reveal">Your data stays yours.</h2>
+    <p class="reveal">No account, no cloud, no cookies, no third-party scripts. Every record lives in a SQLite file on your own server.</p>
+    <a class="btn btn-dark reveal" href="/dashboard">View dashboard</a>
+    <figure class="w-phone reveal">
+      <img src="/peek-mobile.png" alt="The peek dashboard on a phone: KPI cards and a traffic table fit above the fold" width="390" height="844" loading="lazy">
+    </figure>
   </div>
-</section>
-
-<section class="cta container">
-  <h2 class="reveal">See your own dashboard.</h2>
-  <a class="btn btn-primary reveal" href="/dashboard">View dashboard</a>
 </section>
 
 <footer>
@@ -233,8 +267,25 @@ footer{border-top:1px solid var(--line);padding:26px 0}
 </footer>
 
 <script>
-/* live count: real data, silent on failure */
-fetch('/api/live').then(r => r.ok ? r.json() : null).then(d => { if (d) document.getElementById('live').textContent = d.n; }).catch(() => {});
+/* live count + stats: real data, silent on failure, count-up animation */
+const fmt = n => n.toLocaleString('en-US');
+function countUp(el, to, dec = 0, suffix = '', dur = 900) {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { el.textContent = dec ? to.toFixed(dec) : fmt(to); return; }
+  const t0 = performance.now();
+  (function tick(t) {
+    const p = Math.min(1, (t - t0) / dur);
+    const v = to * (1 - Math.pow(1 - p, 3));
+    el.textContent = (dec ? v.toFixed(dec) : fmt(Math.round(v))) + suffix;
+    if (p < 1) requestAnimationFrame(tick);
+  })(t0);
+}
+fetch('/api/stats').then(r => r.ok ? r.json() : null).then(d => {
+  if (!d) return;
+  countUp(document.getElementById('st-live'), d.live);
+  countUp(document.getElementById('st-pv'), d.pv);
+  countUp(document.getElementById('st-uv'), d.uv);
+  countUp(document.getElementById('st-bounce'), d.bounce, 1, '%');
+}).catch(() => {});
 /* scroll reveal: IntersectionObserver, fires once per element */
 const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .12 });
 document.querySelectorAll('.reveal').forEach(el => io.observe(el));

@@ -4,8 +4,9 @@ const { spawn } = require('node:child_process');
 const fs = require('node:fs');
 
 const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe';
-const URL = 'http://admin:peek-admin-2026@localhost:8000/dashboard?range=7d';
-const OUT = (w) => `C:/Users/Spoidy/peek/refs/ours-${w === 1440 ? 'desktop' : 'mobile'}.png`;
+// creds come from .env (DASH_USER/DASH_PASS); run: node --env-file=.env capture.js
+const URL = `http://${process.env.DASH_USER}:${process.env.DASH_PASS}@localhost:8000/dashboard?range=7d`;
+const OUT = (w) => `C:/Users/Spoidy/peek/${w === 1440 ? 'public/peek-dashboard.png' : 'public/peek-mobile.png'}`;
 
 async function capture(width, height) {
   const port = 9800 + Math.floor(Math.random() * 100);
