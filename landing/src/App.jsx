@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import OrigamiUnfold from './components/3d-text-unfold.tsx'
 import MagneticButton from './components/magnetic-hover-button.tsx'
-import AsciiImage from './components/ascii-reveal.tsx'
-import ProximityHover from './components/reactivegrid.tsx'
 import TextPath from './components/textpath.tsx'
 import ElectricBorder from './components/ElectricBorder.tsx'
 import DirectionHover from './components/DirectionHover.tsx'
 import ShinyPill from './components/ShinyPill.tsx'
 import SpotlightText from './components/SpotlightText.tsx'
 import Globe from './components/globe.tsx'
+import Vortex from './components/tornado.tsx'
 
 const fmt = n => n.toLocaleString('en-US')
 const MONO = 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace'
@@ -101,8 +100,28 @@ export default function App() {
       </nav>
 
       <header className="hero">
-        <div className="hero-bg" aria-hidden="true"><ProximityHover particleColor="rgba(245,245,245,0.5)" backgroundColor="#0a0a0a" maxSize={22} minSize={8} gap={6} influence={240} /></div>
-        <div className="hero-copy">
+        <div className="hero-vortex" aria-hidden="true">
+          <Vortex
+            background="#0a0a0a"
+            topRadius={360}
+            waistRadius={50}
+            waistPosition={50}
+            bottomRadius={1150}
+            twist={3}
+            zoom={70}
+            speed={9}
+            direction="right"
+            lineOptions={{ count: 220, color: '#ffffff', glow: 8 }}
+            dots
+            dotOptions={{ count: 7000, size: 16, color: '#f5f5f5', glow: 8, flicker: 8 }}
+            comets
+            cometOptions={{ count: 8, speed: 5, color: '#f5f5f5', glow: 4, tail: 14, delay: 8 }}
+            repel
+            repelOptions={{ radius: 160, strength: 0.35 }}
+            style={{ width: '100%', height: '100%' }}
+          />
+        </div>
+        <div className="hero-inner">
           <p className="eyebrow"><SpotlightText text="COOKIELESS WEB ANALYTICS" brightColor="#f5f5f5" dimColor="rgba(245,245,245,0.28)" maskSize={120} /></p>
           <OrigamiUnfold
             tag="h1"
@@ -120,17 +139,12 @@ export default function App() {
             <a className="btn btn-ghost" href="https://github.com/trippusultan/peek">GitHub</a>
           </div>
         </div>
-        <div className="hero-art" aria-label="The peek dashboard rendered as live ASCII art; move the cursor to reveal the real screenshot">
-          <AsciiImage
-            image="/peek-dashboard.png"
-            columns={130}
-            invert={false}
-            contrast={1.1}
-            inkColor="#f5f5f5"
-            reveal
-            revealOptions={{ size: 190, softness: 24 }}
-            style={{ width: '100%', height: '100%', borderRadius: 16 }}
-          />
+        <div className="hero-spec" aria-label="peek in numbers">
+          <div className="srow"><span>Process</span><b>1</b></div>
+          <div className="srow"><span>Snippet</span><b>353 B</b></div>
+          <div className="srow"><span>Dashboard TTFB</span><b>12 ms</b></div>
+          <div className="srow"><span>Cookies</span><b>0</b></div>
+          <div className="srow"><span>External requests</span><b>0</b></div>
         </div>
       </header>
 
