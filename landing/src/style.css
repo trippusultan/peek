@@ -85,6 +85,19 @@ nav{position:sticky;top:0;z-index:50;background:rgba(10,10,10,.88);backdrop-filt
 .code{margin-top:14px;background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius-card);padding:14px 16px;overflow-x:auto}
 .code code{font-family:var(--mono);font-size:13px;color:var(--muted);white-space:pre}
 
+/* globe: real traffic by country */
+.globe-section{padding:96px 0;border-top:1px solid var(--line)}
+.globe-section h2{font-size:clamp(28px,3.4vw,40px);letter-spacing:-.03em;font-weight:800;margin-bottom:48px}
+.globe-wrap{display:grid;grid-template-columns:1.2fr .8fr;gap:48px;align-items:center}
+.globe{position:relative;aspect-ratio:1/0.9;border:1px solid var(--line);border-radius:var(--radius-card);background:var(--panel);overflow:hidden}
+.globe canvas{position:absolute;inset:0;width:100%;height:100%}
+.crow{display:grid;grid-template-columns:34px 1fr auto;gap:14px;align-items:baseline;padding:13px 2px;border-bottom:1px solid var(--line2);font-size:14px}
+.crow:last-child{border-bottom:0}
+.crow .cn{font-family:var(--mono);font-size:12px;color:var(--dim)}
+.crow .nm2{color:var(--text);font-weight:550}
+.crow .cv{font-family:var(--mono);font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.empty{color:var(--dim);font-size:13.5px;font-family:var(--mono)}
+
 /* white band: the one deliberate inversion */
 .white{background:var(--text);color:#0a0a0a;padding:104px 0;border-top:1px solid var(--line)}
 .w-inner{max-width:1120px;margin:0 auto;padding:0 24px;text-align:center}
@@ -107,6 +120,7 @@ footer{border-top:1px solid var(--line);padding:26px 0}
   .fcell:nth-child(even){padding-left:0;border-left:0}
   .stats-inner{grid-template-columns:1fr 1fr}
   .product{padding:72px 0 0}
+  .globe-wrap{grid-template-columns:1fr;gap:28px}
 }
 @media (max-width:640px){
   .chip{display:none}

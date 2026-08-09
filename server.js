@@ -78,6 +78,9 @@ function rows(data, nameKey, countKey = 'pv', headers = ['Source', 'Visitors']) 
 const COUNTRIES = { IN: 'India', US: 'United States', GB: 'United Kingdom', DE: 'Germany', FR: 'France', NL: 'Netherlands', IE: 'Ireland', BR: 'Brazil', AU: 'Australia', SG: 'Singapore', MY: 'Malaysia', RU: 'Russia', ZA: 'South Africa', JP: 'Japan', CA: 'Canada', AE: 'UAE', PK: 'Pakistan', BD: 'Bangladesh', NG: 'Nigeria', KE: 'Kenya', ES: 'Spain', IT: 'Italy', SE: 'Sweden', CH: 'Switzerland', PL: 'Poland', UA: 'Ukraine', TR: 'Turkey', ID: 'Indonesia', TH: 'Thailand', VN: 'Vietnam', PH: 'Philippines', KR: 'South Korea', TW: 'Taiwan', HK: 'Hong Kong', NZ: 'New Zealand', MX: 'Mexico', AR: 'Argentina', CO: 'Colombia', EG: 'Egypt', IL: 'Israel', FI: 'Finland', NO: 'Norway', DK: 'Denmark', AT: 'Austria', BE: 'Belgium', PT: 'Portugal', CZ: 'Czechia', RO: 'Romania', GR: 'Greece', HU: 'Hungary' };
 const cname = c => COUNTRIES[c] || c;
 
+// country centroids for the landing globe (matches COUNTRIES keys)
+const COORDS = { IN: [20.6, 79.0], US: [37.1, -95.7], GB: [54.0, -2.5], DE: [51.2, 10.4], FR: [46.6, 2.2], NL: [52.1, 5.3], IE: [53.1, -8.2], BR: [-10.3, -51.9], AU: [-25.3, 133.8], SG: [1.35, 103.8], MY: [4.2, 101.9], RU: [61.5, 105.3], ZA: [-29.0, 24.7], JP: [36.2, 138.3], CA: [56.1, -106.3], AE: [24.0, 54.0], PK: [30.4, 69.3], BD: [23.7, 90.4], NG: [9.1, 8.7], KE: [-0.02, 37.9], ES: [40.5, -3.7], IT: [42.8, 12.8], SE: [60.1, 18.6], CH: [46.8, 8.2], PL: [51.9, 19.1], UA: [48.4, 31.2], TR: [39.0, 35.2], ID: [-0.8, 113.9], TH: [15.9, 101.0], VN: [14.1, 108.3], PH: [12.9, 121.8], KR: [36.5, 127.8], TW: [23.7, 121.0], HK: [22.3, 114.2], NZ: [-40.9, 174.9], MX: [23.6, -102.5], AR: [-38.4, -63.6], CO: [4.6, -74.3], EG: [26.8, 30.8], IL: [31.0, 34.9], FI: [61.9, 25.7], NO: [60.5, 8.5], DK: [56.3, 9.5], AT: [47.6, 14.6], BE: [50.5, 4.5], PT: [39.4, -8.2], CZ: [49.8, 15.5], RO: [45.9, 24.9], GR: [39.1, 21.8], HU: [47.2, 19.5] };
+
 function renderDashboard(req, res) {
   if (!authOk(req)) {
     res.set('WWW-Authenticate', 'Basic realm="peek"');
@@ -150,6 +153,13 @@ app.get('/api/stats', (req, res) => {
   const wk = lib.rangeStats(SITE, now - 6 * 86400, now);
   res.set('Cache-Control', 'no-store');
   res.json({ live: lib.currentVisitors(SITE), pv: wk.pv, uv: wk.uv, bounce: wk.bounce, sessions: wk.sessions });
+});
+// 7d countries with centroids for the landing globe (auth-free, real data)
+app.get('/api/countries', (req, res) => {
+  const now = Math.floor(Date.now() / 1000);
+  const rows = lib.topCountries(SITE, now - 6 * 86400);
+  res.set('Cache-Control', 'no-store');
+  res.json(rows.map(r => ({ code: r.country, name: cname(r.country), pv: r.pv, lat: COORDS[r.country]?.[0] ?? null, lng: COORDS[r.country]?.[1] ?? null })));
 });
 // landing page served with the tracking snippet (real data: every visit beacons to /api/event)
 app.get('/', (req, res) => {

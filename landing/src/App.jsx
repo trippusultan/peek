@@ -9,6 +9,7 @@ import DirectionHover from './components/DirectionHover.tsx'
 import ScrollHighlight from './components/scroll-text-highlight.tsx'
 import ShinyPill from './components/ShinyPill.tsx'
 import SpotlightText from './components/SpotlightText.tsx'
+import Globe from './components/globe.tsx'
 
 const fmt = n => n.toLocaleString('en-US')
 const MONO = 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace'
@@ -78,6 +79,14 @@ const STEPS = [
 
 export default function App() {
   const { stats, live } = useLiveStats()
+  const [countries, setCountries] = useState(null)
+
+  useEffect(() => {
+    let alive = true
+    fetch('/api/countries').then(r => r.ok ? r.json() : null).then(d => { if (d && alive) setCountries(d.filter(c => c.lat != null)) }).catch(() => {})
+    return () => { alive = false }
+  }, [])
+  const markers = (countries || []).map(c => ({ lat: c.lat, lng: c.lng }))
 
   return (
     <div className="page">
@@ -189,6 +198,39 @@ export default function App() {
               </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      <section className="globe-section container">
+        <h2>Traffic around the world.</h2>
+        <div className="globe-wrap">
+          <div className="globe" aria-label="3D globe with markers at the countries your visitors came from">
+            <Globe
+              speed={1.6}
+              dots={{ color: '#3a3a3a', size: 5, density: 7, allDots: false }}
+              fill="dots"
+              fillColor="#f5f5f5"
+              oceanColor="#0a0a0a"
+              outlineColor="#2a2a2a"
+              showOutline
+              graticuleColor="#2e2e2e"
+              showGrid
+              markerConfig={{ markers, color: '#f5f5f5', size: 34 }}
+              initialLatitude={20}
+              initialLongitude={-10}
+              stopOnHover
+            />
+          </div>
+          <div className="country-list">
+            {(countries || []).slice(0, 8).map((c, i) => (
+              <div className="crow" key={c.code}>
+                <span className="cn">{String(i + 1).padStart(2, '0')}</span>
+                <span className="nm2">{c.name}</span>
+                <span className="cv">{fmt(c.pv)}</span>
+              </div>
+            ))}
+            {(!countries || countries.length === 0) && <p className="empty">No traffic yet. Visit the landing page to light up your first marker.</p>}
+          </div>
         </div>
       </section>
 
