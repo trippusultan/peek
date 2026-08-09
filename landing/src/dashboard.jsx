@@ -116,7 +116,7 @@ function Dashboard() {
       ) : (
         <>
           <div className="sitebar">
-            <div className="sitename">{data?.site || '\u00A0'} <span className="live"><i></i>{live} current visitors</span></div>
+            <div className="sitename">{data?.site || '\u00A0'} <span className="live"><i></i>{live} current {live === '1' ? 'visitor' : 'visitors'}</span></div>
             <nav className="ranges" aria-label="Date range">
               {data?.ranges.map(r => (
                 <a key={r.k} href={`?range=${r.k}`} className={r.on ? 'on' : ''} onClick={e => { e.preventDefault(); setRange(r.k) }}>{r.label}</a>

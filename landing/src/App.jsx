@@ -6,7 +6,6 @@ import ProximityHover from './components/reactivegrid.tsx'
 import TextPath from './components/textpath.tsx'
 import ElectricBorder from './components/ElectricBorder.tsx'
 import DirectionHover from './components/DirectionHover.tsx'
-import ScrollHighlight from './components/scroll-text-highlight.tsx'
 import ShinyPill from './components/ShinyPill.tsx'
 import SpotlightText from './components/SpotlightText.tsx'
 import Globe from './components/globe.tsx'
@@ -109,8 +108,8 @@ export default function App() {
             tag="h1"
             text="Website analytics without the cookies."
             color="#f5f5f5"
-            font={{ fontFamily: SANS, fontWeight: 800, fontSize: 72, lineHeight: '1.02em', letterSpacing: '-0.045em', textAlign: 'left' }}
-            stagger={0.022}
+            font={{ fontFamily: SANS, fontWeight: 800, fontSize: 'clamp(40px, 5vw, 64px)', lineHeight: '1.04em', letterSpacing: '-0.045em', textAlign: 'left' }}
+            stagger={0.02}
             startRotateY={-90}
             startOpacity={0}
             perspective={1400}
@@ -139,13 +138,13 @@ export default function App() {
         <TextPath
           text="COOKIELESS WEB ANALYTICS"
           separator="  /  "
-          textColor="rgba(245,245,245,0.16)"
-          speed={1.4}
+          textColor="rgba(245,245,245,0.14)"
+          speed={1.1}
           reversed={false}
-          waveFrequency={0.035}
-          waveHeight={26}
+          waveFrequency={0.02}
+          waveHeight={9}
           width="100%"
-          height={110}
+          height={84}
           className="mq"
         />
       </section>
@@ -237,9 +236,7 @@ export default function App() {
       <section className="white">
         <div className="w-inner">
           <h2>Your data stays yours.</h2>
-          <p className="w-statement">
-            <ScrollHighlight text="No account, no cloud, no cookies, no third-party scripts. Every record lives in a SQLite file on your own server." dimColor="rgba(10,10,10,0.38)" highlightColor="#0a0a0a" splitBy="word" scrub />
-          </p>
+          <p className="w-statement">No account, no cloud, no cookies, no third-party scripts. Every record lives in a SQLite file on your own server.</p>
           <div className="w-cta">
             <ShinyPill text="View dashboard" link="/dashboard" textColor="#f5f5f5" shineColor="#0a0a0a" speed={1.8} style={{ background: '#0a0a0a', padding: '14px 30px', borderRadius: 8, fontSize: 16, fontWeight: 650 }} />
           </div>
