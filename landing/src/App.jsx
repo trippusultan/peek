@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import OrigamiUnfold from './components/3d-text-unfold.tsx'
-import MagneticButton from './components/magnetic-hover-button.tsx'
 import TextPath from './components/textpath.tsx'
 import ElectricBorder from './components/ElectricBorder.tsx'
 import DirectionHover from './components/DirectionHover.tsx'
 import ShinyPill from './components/ShinyPill.tsx'
-import SpotlightText from './components/SpotlightText.tsx'
 import Globe from './components/globe.tsx'
-import Vortex10 from './components/tornado-v10.tsx'
 import Navbar from './components/Navbar.jsx'
+import Hero18 from './components/originkit/hero-18.tsx'
 
 const fmt = n => n.toLocaleString('en-US')
 const MONO = 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace'
@@ -91,54 +88,8 @@ export default function App() {
     <div className="page">
       <Navbar live={live} />
 
-      <header className="hero">
-        <div className="hero-copy">
-          <p className="eyebrow"><SpotlightText text="COOKIELESS WEB ANALYTICS" brightColor="#f5f5f5" dimColor="rgba(245,245,245,0.28)" maskSize={120} /></p>
-          <OrigamiUnfold
-            tag="h1"
-            text="Website analytics without the cookies."
-            color="#f5f5f5"
-            font={{ fontFamily: SANS, fontWeight: 800, fontSize: 'clamp(38px, 4.6vw, 60px)', lineHeight: '1.04em', letterSpacing: '-0.045em', textAlign: 'left' }}
-            stagger={0.02}
-            startRotateY={-90}
-            startOpacity={0}
-            perspective={1400}
-          />
-          <p className="sub">One process, one snippet, zero tracking scripts. Real visitors, private by default.</p>
-          <div className="hero-ctas">
-            <MagneticButton label="View dashboard" link="/dashboard" fill="#f5f5f5" textColor="#0a0a0a" sweepColor="#e8e8e8" sweepTextColor="#0a0a0a" paddingX={26} paddingY={14} radius={8} border={false} font={{ fontFamily: SANS, fontWeight: 650, fontSize: 15, lineHeight: '1em', letterSpacing: '-0.01em', textAlign: 'left' }} />
-            <a className="btn btn-ghost" href="https://github.com/trippusultan/peek">GitHub</a>
-          </div>
-          <div className="hero-spec" aria-label="peek in numbers">
-            <div className="srow"><span>Process</span><b>1</b></div>
-            <div className="srow"><span>Snippet</span><b>353 B</b></div>
-            <div className="srow"><span>Dashboard TTFB</span><b>12 ms</b></div>
-            <div className="srow"><span>Cookies</span><b>0</b></div>
-            <div className="srow"><span>External requests</span><b>0</b></div>
-          </div>
-        </div>
-        <div className="hero-vortex" aria-hidden="true">
-          <Vortex10
-            background="#0a0a0a"
-            topRadius={360}
-            waistRadius={50}
-            waistPosition={50}
-            bottomRadius={1150}
-            twist={3}
-            zoom={70}
-            speed={9}
-            direction="right"
-            lineOptions={{ count: 220, color: '#ffffff', glow: 8 }}
-            dots
-            dotOptions={{ count: 7000, size: 16, color: '#f5f5f5', glow: 8, flicker: 8 }}
-            comets
-            cometOptions={{ count: 8, speed: 5, color: '#f5f5f5', glow: 4, tail: 14, delay: 8 }}
-            repel
-            repelOptions={{ radius: 160, strength: 0.35 }}
-            style={{ width: '100%', height: '100%' }}
-          />
-        </div>
-      </header>
+      {/* Originkit Hero 18 (CLI-delivered section, wired verbatim) */}
+      <Hero18 />
 
       <section className="marquee" aria-hidden="true">
         <TextPath
