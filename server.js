@@ -16,6 +16,7 @@ app.disable('x-powered-by');
 const SNIPPET = fs.readFileSync(path.join(__dirname, 'public', 'snippet.js'));
 const DASH = fs.readFileSync(path.join(__dirname, 'views', 'dashboard.html'), 'utf8');
 const PROGRESS = fs.readFileSync(path.join(__dirname, 'views', 'progress.html'), 'utf8');
+const INDEX = fs.readFileSync(path.join(__dirname, 'public', 'index.html'), 'utf8');
 
 function authOk(req) {
   const h = req.headers.authorization || '';
@@ -150,7 +151,12 @@ app.get('/api/stats', (req, res) => {
   res.set('Cache-Control', 'no-store');
   res.json({ live: lib.currentVisitors(SITE), pv: wk.pv, uv: wk.uv, bounce: wk.bounce, sessions: wk.sessions });
 });
-// landing page + product screenshots (index.html served at /; html never cached so updates show instantly)
+// landing page served with the tracking snippet (real data: every visit beacons to /api/event)
+app.get('/', (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.send(INDEX.replace('{{SITE}}', esc(SITE)));
+});
+// landing page + product screenshots (html never cached so updates show instantly)
 app.use(express.static(path.join(__dirname, 'public'), {
   maxAge: 3600,
   setHeaders: (res, p) => { if (p.endsWith('.html')) res.setHeader('Cache-Control', 'no-store'); }
