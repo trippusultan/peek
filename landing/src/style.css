@@ -92,13 +92,13 @@ a{color:var(--text);text-decoration:none}
 .how{padding:96px 0;border-top:1px solid var(--line)}
 .how h2{margin-bottom:48px}
 .steps{display:grid;gap:0;max-width:760px}
-.step{display:grid;grid-template-columns:44px 1fr;gap:20px;padding:26px 0;border-top:1px solid var(--line);transition:background .2s}
+.step{display:grid;grid-template-columns:44px minmax(0,1fr);gap:20px;padding:26px 0;border-top:1px solid var(--line);transition:background .2s}
 .step:last-child{border-bottom:1px solid var(--line)}
 .step:hover{background:rgba(255,255,255,.03)}
 .step .n{font-family:var(--mono);color:var(--text);font-size:15px;padding-top:4px}
 .step h3{font-size:17px;font-weight:700}
 .step p{color:var(--muted);font-size:14.5px;margin-top:4px}
-.code{margin-top:14px;background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius-card);padding:14px 16px;overflow-x:auto}
+.code{margin-top:14px;background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius-card);padding:14px 16px;overflow-x:auto;min-width:0}
 .code code{font-family:var(--mono);font-size:13px;color:var(--muted);white-space:pre}
 
 /* globe: real traffic by country */
@@ -145,7 +145,11 @@ footer{border-top:1px solid var(--line);padding:26px 0}
   .chip{display:none}
   .nav21-center{display:none}
   .stats-inner{padding:20px 24px;gap:20px 12px}
+  .sv{font-size:24px}
+  .sl{font-size:10px;letter-spacing:.08em}
   .hero-spec{grid-template-columns:1fr 1fr}
+  .fcell .mono{white-space:normal;word-break:break-word}
+  .code code{font-size:12px}
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
