@@ -138,6 +138,11 @@ app.get('/progress', (req, res) => {
   res.send(PROGRESS);
 });
 app.use('/progress.json', express.static(path.join(__dirname, 'progress.json'), { maxAge: 0 }));
+// live visitor count for the landing chip (auth-free, real data)
+app.get('/api/live', (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json({ n: lib.currentVisitors(SITE) });
+});
 // landing page + product screenshots (index.html served at /)
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 3600 }));
 
