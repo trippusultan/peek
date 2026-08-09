@@ -91,21 +91,28 @@ const ok = (name) => { n++; console.log('  ok', name); };
   });
 }
 
-// 7. dashboard auth + content
+// 7. dashboard auth + JSON API content (frontend-patterns React dashboard consumes /api/dashboard)
 function checkAuth() {
   http.get(base() + '/dashboard', res => {
     assert.strictEqual(res.statusCode, 401, 'no creds -> 401');
     assert.ok(res.headers['www-authenticate'].startsWith('Basic'));
-    const req = http.request(base() + '/dashboard?range=7d', { headers: { Authorization: 'Basic ' + Buffer.from('u:p').toString('base64') } }, res2 => {
+    const req = http.request(base() + '/api/dashboard?range=7d', { headers: { Authorization: 'Basic ' + Buffer.from('u:p').toString('base64') } }, res2 => {
       let body = '';
       res2.on('data', d => body += d);
       res2.on('end', () => {
         assert.strictEqual(res2.statusCode, 200);
-        for (const s of ['Unique visitors', 'Bounce rate', 'Traffic', 'Sources', 'Pages', 'Countries', 'Devices', '<svg']) {
-          assert.ok(body.includes(s), `dashboard includes "${s}"`);
+        const d = JSON.parse(body);
+        assert.ok(d.site && d.ranges.length === 3, 'site + 3 range links');
+        assert.strictEqual(d.kpis.length, 4, 'four KPIs');
+        for (const s of ['Unique visitors', 'Bounce rate']) {
+          assert.ok(d.kpis.some(k => k.label === s), `kpi "${s}" present`);
         }
-        assert.ok(!body.includes('{{UV}}'), 'tokens replaced');
-        ok('dashboard: 401 without creds, 200 with, all panels present, SVG chart rendered');
+        assert.ok(d.chart.points.length > 0, 'chart points present');
+        for (const s of ['Sources', 'Pages', 'Countries', 'Devices']) {
+          assert.ok(d.tabs.some(t => t.label === s), `tab "${s}" present`);
+        }
+        assert.ok(d.table.headers.length === 2 && d.table.rows.length > 0, 'table with rows');
+        ok('dashboard: 401 without creds, 200 with, JSON kpis/chart/tabs/table all present');
         finish();
       });
     });

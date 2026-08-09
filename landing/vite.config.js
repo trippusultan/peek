@@ -1,13 +1,20 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { resolve } from 'node:path'
 
-// Build lands in ../public (what Express serves). emptyOutDir:false keeps the
-// tracked screenshots + snippet.js there. Stale hashed assets from old builds
-// accumulate; harmless.
+// Multi-page: landing (/) + dashboard (/dashboard). Build lands in ../public
+// (what Express serves). emptyOutDir:false keeps the tracked screenshots,
+// snippet.js, and old hashed assets there (harmless).
 export default defineConfig({
   plugins: [react()],
   build: {
     outDir: '../public',
     emptyOutDir: false,
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        dashboard: resolve(__dirname, 'dashboard.html'),
+      },
+    },
   },
 })

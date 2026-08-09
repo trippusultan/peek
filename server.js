@@ -135,7 +135,70 @@ function renderDashboard(req, res) {
   res.send(html);
 }
 
-app.get('/dashboard', renderDashboard);
+app.get('/dashboard', (req, res) => {
+  if (!authOk(req)) {
+    res.set('WWW-Authenticate', 'Basic realm="peek"');
+    return res.status(401).end();
+  }
+  res.set('Cache-Control', 'no-store');
+  res.send(fs.readFileSync(path.join(__dirname, 'public', 'dashboard.html'), 'utf8').replaceAll('{{SITE}}', esc(SITE)));
+});
+
+// JSON for the React dashboard (auth-gated; frontend-patterns useQuery consumer)
+app.get('/api/dashboard', (req, res) => {
+  if (!authOk(req)) {
+    res.set('WWW-Authenticate', 'Basic realm="peek"');
+    return res.status(401).end();
+  }
+  const range = req.query.range === 'today' ? 'today' : req.query.range === '30d' ? '30d' : '7d';
+  const tab = req.query.tab === 'pages' ? 'pages' : req.query.tab === 'countries' ? 'countries' : req.query.tab === 'devices' ? 'devices' : 'sources';
+  const now = Date.now();
+  const DAY = 86400000;
+  const ranges = {
+    today: { start: new Date(new Date().toISOString().slice(0, 10)).getTime(), len: DAY, label: 'Today' },
+    '7d': { start: now - 6 * DAY, len: 7 * DAY, label: 'Last 7 days' },
+    '30d': { start: now - 29 * DAY, len: 30 * DAY, label: 'Last 30 days' }
+  };
+  const { start, len } = ranges[range];
+  const s = Math.floor(start / 1000), e = Math.floor(now / 1000);
+  const cur = lib.rangeStats(SITE, s, e);
+  const prev = lib.rangeStats(SITE, Math.floor((start - len) / 1000), s);
+  const jt = (v, p, inv = false) => {
+    const pct = p ? Math.round(((v - p) / p) * 100) : 0;
+    if (inv) return { dir: pct > 0 ? 'down' : pct < 0 ? 'up' : 'flat', pct: Math.abs(pct) };
+    return { dir: pct > 0 ? 'up' : pct < 0 ? 'down' : 'flat', pct: Math.abs(pct) };
+  };
+  const table = tab === 'pages'
+    ? { headers: ['Page', 'Pageviews'], rows: lib.topPages(SITE, s).map(r => ({ name: r.path, count: r.pv })) }
+    : tab === 'countries'
+      ? { headers: ['Country', 'Visitors'], rows: lib.topCountries(SITE, s).map(r => ({ name: cname(r.country), count: r.pv })) }
+      : tab === 'devices'
+        ? { headers: ['Device', 'Visitors'], rows: lib.topScr(SITE, s).map(r => ({ name: r.scr[0].toUpperCase() + r.scr.slice(1), count: r.pv })) }
+        : { headers: ['Source', 'Visitors'], rows: lib.topRefs(SITE, s).map(r => ({ name: r.ref || 'Direct / None', count: r.pv })) };
+  const max = Math.max(1, table.rows[0]?.count || 1);
+  table.rows = table.rows.map(r => ({ ...r, pct: Math.round((r.count / max) * 100) }));
+  res.set('Cache-Control', 'no-store');
+  res.json({
+    site: SITE,
+    range,
+    ranges: Object.entries(ranges).map(([k, v]) => ({ k, label: v.label, on: k === range })),
+    live: lib.currentVisitors(SITE),
+    kpis: [
+      { label: 'Unique visitors', val: lib.fmt(cur.uv), trend: jt(cur.uv, prev.uv) },
+      { label: 'Pageviews', val: lib.fmt(cur.pv), trend: jt(cur.pv, prev.pv) },
+      { label: 'Bounce rate', val: cur.bounce + '%', trend: jt(cur.bounce, prev.bounce, true) },
+      { label: 'Sessions', val: lib.fmt(cur.sessions), trend: jt(cur.sessions, prev.sessions) }
+    ],
+    chart: {
+      mode: range === 'today' ? 'hour' : 'day',
+      points: range === 'today'
+        ? lib.perHour(SITE, s, e).map(p => ({ label: `${String(p.h).padStart(2, '0')}:00`, uv: p.uv }))
+        : lib.perDay(SITE, s, e).map(p => ({ label: p.day, uv: p.uv }))
+    },
+    tabs: [['sources', 'Sources'], ['pages', 'Pages'], ['countries', 'Countries'], ['devices', 'Devices']].map(([k, label]) => ({ k, label, on: k === tab })),
+    table
+  });
+});
 
 app.get('/progress', (req, res) => {
   res.set('Cache-Control', 'no-store');
